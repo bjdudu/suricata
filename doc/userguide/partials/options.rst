@@ -2,90 +2,67 @@
 
 .. option:: -h
 
-   Display a brief usage overview.
+   显示使用概要
 
 .. option:: -V
 
-   Displays the version of Suricata.
+   显示Suricata版本
 
 .. option:: -c <path>
 
-   Path to configuration file.
+   指定配置文件路径
 
 .. option:: -T
 
-   Test configuration.
+   测试配置
 
 .. option:: -v
 
-   The -v option enables more verbosity of Suricata's output. Supply
-   multiple times for more verbosity.
+   -v 选项让Suricata输出详细信息。 多次使用这个选项可以得到更多详细信息。
 
 .. Basic input options.
 
 .. option:: -r <path>
 
-   Run in pcap offline mode reading files from pcap file. If <path> specifies
-   a directory, all files in that directory will be processed in order of
-   modified time maintaining flow state between files.
+   以pcap离线模式运行从pcap文件中读取数据。 如果<path>指定一个目录，则将按照修改时间的顺序处理该目录中的所有文件，以保持流状态。
 
 .. option:: --pcap-file-continuous
 
-   Used with the -r option to indicate that the mode should stay alive until
-   interrupted. This is useful with directories to add new files and not reset
-   flow state between files.
+   与-r 选项一起使用以指示运行模式应该保持活动直到被中断。 在以目录方式添加处理文件时，加上这个选项不会重置流状态。
 
 .. option::  -i <interface>
 
-   After the -i option you can enter the interface card you would like
-   to use to sniff packets from.  This option will try to use the best
-   capture method available.
+   -i 选项指定用于嗅探数据包的网卡，此选项将尝试可用的最佳数据包捕获方法。
 
 .. option:: --pcap[=<device>]
 
-   Run in PCAP mode. If no device is provided the interfaces
-   provided in the *pcap* section of the configuration file will be
-   used.
+   以PCAP模式运行。 如果未指定设备，则将使用配置文件中*pcap*部分提供的接口。
    
 .. option:: --af-packet[=<device>]
 
-   Enable capture of packet using AF_PACKET on Linux. If no device is
-   supplied, the list of devices from the af-packet section in the
-   yaml is used.
+   指定Linux上使用AF_PACKET进行数据包捕获。 如果没有指定设备，则使用yaml配置文件中af-packet部分的设备列表。
 
 .. option:: -q <queue id>
 
-   Run inline of the NFQUEUE queue ID provided. May be provided
-   multiple times.
+   根据NFQUEUE队列ID运行在inline nfqueue模式，这个ID可能会多次提供
 
 .. Back to other basic options.
 
 .. option:: -s <filename.rules>
 
-   With the -s option you can set a file with signatures, which will
-   be loaded together with the rules set in the yaml.
+   -s 选项指定一个规则文件，这个文件可以与yaml配置文件中指定的规则文件一起加载使用。
 
 .. option:: -S <filename.rules>
 
-   With the -S option you can set a file with signatures, which will
-   be loaded exclusively, regardless of the rules set in the yaml.
+   -S 选项指定一个规则文件，这个文件会单独加载使用，而不加载yaml配置文件中指定的规则文件。
 
 .. option:: -l <directory>
 
-   With the -l option you can set the default log directory. If you
-   already have the default-log-dir set in yaml, it will not be used
-   by Suricata if you use the -l option. It will use the log dir that
-   is set with the -l option. If you do not set a directory with
-   the -l option, Suricata will use the directory that is set in yaml.
+   -l 选项指定默认日志目录。 即使您已经在yaml配置文件中设置了default-log-dir，Suricata也会忽略这个设置。如果您没有使用-l选项，Suricata将使用yaml中设置的目录。
 
 .. option:: -D
 
-   Normally if you run Suricata on your console, it keeps your console
-   occupied. You can not use it for other purposes, and when you close
-   the window, Suricata stops running.  If you run Suricata as daemon
-   (using the -D option), it runs at the background and you will be
-   able to use the console for other tasks without disturbing the
-   engine running.
+   通常当你使用console运行suricata时，这个console会被suricata占用而不能用来处理其他工作，console关闭时suricata也wf 被关闭。使用-D选项，suricata会在后台运行，这时你可以使用console干处理其他工作而不会影响到suricata运行。
 
 .. option:: --runmode <runmode>
 
