@@ -2,24 +2,21 @@
 
 .. option:: -u
 
-   Run the unit tests and exit. Requires that Suricata be compiled
-   with *--enable-unittests*.
+   运行单元测试并退出，要求Suricata编译时添加 *--enable-unittests* 选项.
 
 .. option:: -U, --unittest-filter=REGEX
 
-   With the -U option you can select which of the unit tests you want
-   to run. This option uses REGEX. Example of use: suricata -u -U
+   -U 选项指定将要运行的单元测试，这个选项可以使用正则表达式，例如: suricata -u -U
    http
 
 .. option:: --list-unittests
 
-   List all unit tests.
+   列出所有单元测试
 
 .. option:: --fatal-unittests
 
-   Enables fatal failure on a unit test error. Suricata will exit
-   instead of continuing more tests.
+   单元测试出错时启动致命失败，Suricata将会退出而不是继续进行测试。
 
 .. option:: --unittests-coverage
 
-   Display unit test coverage report.
+   显示单元测试覆盖报告。
