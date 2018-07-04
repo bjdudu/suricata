@@ -1,7 +1,7 @@
 规则格式
 ============
 
-规则在Suricata中起着非常重要的作用，大多数情况下人们通常使用现有的规则集.
+规则在Suricata中起着非常重要的作用，大多数情况下人们使用现有的规则集.
 
 The official way to install rulesets is described in :doc:`../rule-management/suricata-update`.
 
