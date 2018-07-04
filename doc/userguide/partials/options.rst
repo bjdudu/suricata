@@ -167,10 +167,7 @@
 
 .. option:: --dag <device>
 
-   Enable packet capture off a DAG card. If capturing off a specific
-   stream the stream can be select using a device name like
-   "dag0:4". This option may be provided multiple times read off
-   multiple devices and/or streams.启用DAG卡数据包捕获。可使用诸如“dag0：4”之类的设备名称来选择捕获特定流，这个选项可以多次使用以指定多个设备和/或流。
+   启用DAG卡数据包捕获。可使用诸如“dag0：4”之类的设备名称来选择捕获特定流，这个选项可以多次使用以指定多个设备和/或流。
 	    
 .. option:: --napatech
 
