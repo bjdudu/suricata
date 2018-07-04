@@ -3,17 +3,15 @@
 
 规则在Suricata中起着非常重要的作用，大多数情况下人们使用现有的规则集.
 
-The official way to install rulesets is described in :doc:`../rule-management/suricata-update`.
+官方途径来安装规则集请参考 :doc:`../rule-management/suricata-update`.
 
-This Suricata Rules document explains all about signatures; how to
-read, adjust and create them.
+本Suricata规则文件解释了所有关于规则的内容; 如何阅读，调整和创建它们。
 
-A rule/signature consists of the following:
+规则/签名包括以下内容：
 
-* The **action**, that determines what happens when the signature matches
-* The **header**, defining the protocol, IP addresses, ports and direction of
-  the rule.
-* The **rule options**, defining the specifics of the rule.
+* **action**, 确定规则匹配时执行的动作
+* **header**, 定义协议，IP地址，端口和方向.
+* **rule options**, 定义规则细节.
 
 
 .. role:: example-rule-action
@@ -21,47 +19,41 @@ A rule/signature consists of the following:
 .. role:: example-rule-options
 .. role:: example-rule-emphasis
 
-An example of a rule is as follows:
+下面是一个规则的例子:
 
 .. container:: example-rule
 
     :example-rule-action:`drop` :example-rule-header:`tcp $HOME_NET any -> $EXTERNAL_NET any` :example-rule-options:`(msg:"ET TROJAN Likely Bot Nick in IRC (USA +..)"; flow:established,to_server; flowbits:isset,is_proto_irc; content:"NICK "; pcre:"/NICK .*USA.*[0-9]{3,}/i"; reference:url,doc.emergingthreats.net/2008124; classtype:trojan-activity; sid:2008124; rev:2;)`
 
-In this example, :example-rule-action:`red` is the action,
-:example-rule-header:`green` is the header and :example-rule-options:`blue`
-are the options.
+在这个例子里, :example-rule-action:`红色` 是动作,
+:example-rule-header:`绿色` 规则头部， :example-rule-options:`蓝色`
+是规则选项。
 
-We will be using the above signature as an example throughout
-this section, highlighting the different parts of the signature. It is a
-signature taken from the database of Emerging Threats, an open database
-featuring lots of rules that you can freely download and use in your
-Suricata instance.
+我们将在本节中使用上述规则作为示例，高亮显示规则的不同部分。它是来自Emerging Threats数据库的签名，这是一个开放式数据库，其中包含许多规则，您可以在Suricata实例中免费下载和使用这些规则。
 
-Action
+动作
 ------
 .. container:: example-rule
 
     :example-rule-emphasis:`drop` tcp $HOME_NET any -> $EXTERNAL_NET any (msg:"ET TROJAN Likely Bot Nick in IRC (USA +..)"; flow:established,to_server; flowbits:isset,is_proto_irc; content:"NICK "; pcre:"/NICK .*USA.*[0-9]{3,}/i"; reference:url,doc.emergingthreats.net/2008124; classtype:trojan-activity; sid:2008124; rev:2;)
 
-For more information see :ref:`suricata-yaml-action-order`.
+更多信息请参见 :ref:`suricata-yaml-action-order`.
 
 
-Protocol
+协议
 --------
 .. container:: example-rule
 
     drop :example-rule-emphasis:`tcp` $HOME_NET any -> $EXTERNAL_NET any (msg:"ET TROJAN Likely Bot Nick in IRC (USA +..)"; flow:established,to_server; flowbits:isset,is_proto_irc; content:"NICK "; pcre:"/NICK .*USA.*[0-9]{3,}/i"; reference:url,doc.emergingthreats.net/2008124; classtype:trojan-activity; sid:2008124; rev:2;)
 
-This keyword in a signature tells Suricata which protocol it
-concerns. You can choose between four basic protocols:
+这个规则关键字告诉Suricata什么协议是它关注的，你可以选择以下四种基础协议:
 
 * tcp (for tcp-traffic)
 * udp
 * icmp
-* ip (ip stands for 'all' or 'any')
+* ip (ip 意味着 'all' or 'any')
 
-There are also a few so-called application layer protocols, or layer 7 protocols
-you can pick from. These are:
+还有一些所谓的应用层协议或者第七层协议可以选择，它们包括:
 
 * http
 * ftp
@@ -73,210 +65,177 @@ you can pick from. These are:
 * smtp
 * imap
 * msn
-* modbus (disabled by default)
-* dnp3 (disabled by default)
-* enip (disabled by default)
-* nfs (depends on rust availability)
-* ikev2 (depends on rust availability)
-* krb5 (depends on rust availability)
-* ntp (depends on rust availability)
-* dhcp (depends on rust availability)
+* modbus (默认禁用)
+* dnp3 (默认禁用)
+* enip (默认禁用)
+* nfs (取决于rust是否可用)
+* ikev2 (取决于rust是否可用)
+* krb5 (取决于rust是否可用)
+* ntp (取决于rust是否可用)
+* dhcp (取决于rust是否可用)
 
-The availability of these protocols depends on whether the protocol is enabled in the configuration file suricata.yaml.
+这些协议是否可用取决于协议是否在suricata.yaml配置文件中启用。
 
-If you have a signature with for
-instance a http protocol, Suricata makes sure the signature can only
-match if it concerns http-traffic.
+如果你有一个HTTP协议的规则，Suricata确认这条规则只会匹配HTTP相关的流量
 
-Source and destination
+源和目的
 ----------------------
 .. container:: example-rule
 
     drop tcp :example-rule-emphasis:`$HOME_NET` any -> :example-rule-emphasis:`$EXTERNAL_NET` any (msg:"ET TROJAN Likely Bot Nick in IRC (USA +..)"; flow:established,to_server; flowbits:isset,is_proto_irc; content:"NICK "; pcre:"/NICK .*USA.*[0-9]{3,}/i"; reference:url,doc.emergingthreats.net/2008124; classtype:trojan-activity; sid:2008124; rev:2;)
 
-*The first emphasized part is the source, the second is the destination (note the direction of the directional arrow).*
+*第一个高亮部分就是源,第二个是目的(注意箭头的方向).*
 
-With source and destination, you specify the source of the traffic and the
-destination of the traffic, respectively. You can assign IP addresses,
-(both IPv4 and IPv6 are supported) and IP ranges. These can be combined with
-operators:
+源和目的分别表示流量的来源和流量的目的，可以使用IP地址（支持IPv4和IPv6）和IP范围来定义源和目的，并且可以用以下操作符来进行组合使用:
 
 ==============  =========================
-Operator        Description
+操作符           描述
 ==============  =========================
-../..           IP ranges (CIDR notation)
-!               exception/negation
-[.., ..]        grouping
+../..           IP范围 (CIDR表示法)
+!               排除/取反
+[.., ..]        组合
 ==============  =========================
 
-Normally, you would also make use of variables, such as ``$HOME_NET`` and
-``$EXTERNAL_NET``. The configuration file specifies the IP addresses these
-concern, and these settings will be used in place of the variables in you rules.
-See :ref:`suricata-yaml-rule-vars` for more information.
+通常，我们可以使用变量, 如 ``$HOME_NET`` 和
+``$EXTERNAL_NET``. 配置文件中指定了这些变量的IP地址，用于代替规则中的变量。
+更多信息请参考 :ref:`suricata-yaml-rule-vars`  
 
-For example:
+例如:
 
 ==================================  ==========================================
-Example                             Meaning
+例子                                含义
 ==================================  ==========================================
-! 1.1.1.1                           Every IP address but 1.1.1.1
-![1.1.1.1, 1.1.1.2]                 Every IP address but 1.1.1.1 and 1.1.1.2
-$HOME_NET                           Your setting of HOME_NET in yaml
-[$EXTERNAL_NET, !$HOME_NET]         EXTERNAL_NET and not HOME_NET
-[10.0.0.0/24, !10.0.0.5]            10.0.0.0/24 except for 10.0.0.5
+! 1.1.1.1                           除了1.1.1.1的任意IP
+![1.1.1.1, 1.1.1.2]                 除了1.1.1.1 和 1.1.1.2 的任意IP
+$HOME_NET                           配置文件中设置的HOME_NET变量
+[$EXTERNAL_NET, !$HOME_NET]         包含EXTERNAL_NET但不包含HOME_NET的地址
+[10.0.0.0/24, !10.0.0.5]            10.0.0.0/24但不包括10.0.0.5
 [..., [....]]
 [..., ![.....]]
 ==================================  ==========================================
 
 .. warning::
 
-   If you set your configuration to something like this::
+   如果你在配置文件中做了如下设置::
 
        HOME_NET: any
        EXTERNAL_NET: ! $HOME_NET
 
-   You can not write a signature using ``$EXTERNAL_NET`` because it stands for
-   'not any'. This is an invalid setting.
+   那么你不能在规则中使用 ``$EXTERNAL_NET`` ，这是因为它代表
+   'not any'. 这是一个无效设置。
 
-Ports (source and destination)
+端口 (源和目的)
 ------------------------------
 .. container:: example-rule
 
     drop tcp $HOME_NET :example-rule-emphasis:`any` -> $EXTERNAL_NET :example-rule-emphasis:`any` (msg:"ET TROJAN Likely Bot Nick in IRC (USA +..)"; flow:established,to_server; flowbits:isset,is_proto_irc; content:"NICK "; pcre:"/NICK .*USA.*[0-9]{3,}/i"; reference:url,doc.emergingthreats.net/2008124; classtype:trojan-activity; sid:2008124; rev:2;)
 
-*The first emphasized part is the source, the second is the destination (note the direction of the directional arrow).*
+*第一个高亮部分是源端口，第二是是目的端口 (注意箭头方向).*
 
-Traffic comes in and goes out through ports. Different ports have
-different port numbers. For example, the default port for HTTP is 80 while 443 is
-typically the port for HTTPS. Note, however, that the port does not
-dictate which protocol is used in the communication. Rather, it determines which
-application is receiving the data.
+流量通过端口进入和流出，不同的端口具有不同的端口号。例如，HTTP的默认端口是80，而443通常是HTTPS的端口。但请注意，端口不代表通信中使用的协议。相反，它确定哪个应用程序正在接收数据。
 
-The ports mentioned above are typically the destination ports. Source ports,
-i.e. the application that sent the packet, typically get assigned a random
-port by the operating system. When writing a rule for your own HTTP service,
-you would typically write ``any -> 80``, since that would mean any packet from
-any source port to your HTTP application (running on port 80) is matched.
+上面提到的端口通常是目标端口。 源端口，即发送数据包的应用程序使用的端口，通常由操作系统随机分配。 在为自己的HTTP服务编写规则时，通常会编写``any - > 80``，因为这意味着从任何源端口到HTTP应用程序（在端口80上运行）的任何数据包都是匹配的。
 
-In setting ports you can make use of special operators as well, like
-described above. Signs like:
+在端口设置中你也可以像上面描述的那样使用特定操作符, 例如:
 
 ==============  ==================
-Operator        Description
+操作符           描述
 ==============  ==================
-:               port ranges
-!               exception/negation
-[.., ..]        grouping
+:               商品范围
+!               排除/取反
+[.., ..]        组合
 ==============  ==================
 
-For example:
+例如:
 
 ==============  ==========================================
-Example                             Meaning
+例子                             含义
 ==============  ==========================================
-[80, 81, 82]    port 80, 81 and 82
-[80: 82]        Range from 80 till 82
-[1024: ]        From 1024 till the highest port-number
-!80             Every port but 80
-[80:100,!99]    Range from 80 till 100 but 99 excluded
-[1:80,![2,4]]   Range from 1-80, except ports 2 and 4
+[80, 81, 82]    端口 80, 81 and 82
+[80: 82]        从80到82端口
+[1024: ]        从1024到最高端口号
+!80             除了80的任意端口
+[80:100,!99]    从80到100，99除外
+[1:80,![2,4]]   从1到80, 除开2和4
 [.., [..,..]]
 ==============  ==========================================
 
 
-Direction
+方向
 ---------
 .. container:: example-rule
 
     drop tcp $HOME_NET any :example-rule-emphasis:`->` $EXTERNAL_NET any (msg:"ET TROJAN Likely Bot Nick in IRC (USA +..)"; flow:established,to_server; flowbits:isset,is_proto_irc; content:"NICK "; pcre:"/NICK .*USA.*[0-9]{3,}/i"; reference:url,doc.emergingthreats.net/2008124; classtype:trojan-activity; sid:2008124; rev:2;)
 
-The direction tells in which way the signature has to match. Nearly
-every signature has an arrow to the right (``->``). This means that only
-packets with the same direction can match. However, it is also possible to
-have a rule match both ways (``<>``)::
+方向告诉规则匹配哪个方向的流量，几乎所有的规则都有一个右箭头(``->``)来指示方向，这意味着只有相同方向的流量才会被匹配。但是，匹配双向流量的规则也是存在的 (``<>``)::
 
   source -> destination
   source <> destination  (both directions)
 
 .. warning::
 
-   There is no 'reverse' style direction, i.e. there is no ``<-``.
+   没有相反方向, 即没有 ``<-`` 符号。
 
-The following example illustrates this. Say, there is a client with IP address
-1.2.3.4 and port 1024, and a server with IP address 5.6.7.8, listening on port
-80 (typically HTTP). The client sends a message to the server, and the server
-replies with its answer.
+下图中的例子说明了这个问题， 比如，有一个IP地址为1.2.3.4和端口1024的客户端，以及一个IP地址为5.6.7.8的服务器，监听端口80（通常是HTTP）。客户端向服务器发送消息，服务器回复应答。
 
 .. image:: intro/TCP-session.png
 
-Now, let's say we have a rule with the following header::
+现在，我们有一条规则包含如下头部::
 
     alert tcp 1.2.3.4 1024 -> 5.6.7.8 80
 
-Only the first packet will be matched by this rule, as the direction specifies
-that we do not match on the response packet.
+只有第一个数据包才会被这条规则匹配，因为方向确定了我们无法匹配应答数据包。
 
-Rule options
+规则选项
 ------------
-The rest of the rule consists of options. These are enclosed by parenthesis
-and separated by semicolons. Some options have settings (such as ``msg``),
-which are specified by the keyword of the option, followed by a colon,
-followed by the settings. Others have no settings, and are simply the
-keyword (such as ``nocase``)::
+规则剩下的部分由规则选项组成。 这些选项用括号括起来并用分号分隔。有些选项有设置内容(如 ``msg``),
+它由选项关键字指定, 后面跟上冒号,再后面就是设置值。其它的没有设置内容,仅仅只有选项关键字(如 ``nocase``)::
 
   <keyword>: <settings>;
   <keyword>;
 
-Rule options have a specific ordering and changing their order would change the
-meaning of the rule.
+规则选项具有特定的顺序，更改其顺序将改变规则的含义。
 
 .. note::
 
-    The characters ``;`` and ``"`` have special meaning in the
-    Suricata rule language and must be escaped when used in a
-    rule option value. For example::
+    字符 ``;`` 和 ``"`` 在Suricata规则语言中具有特殊的含义，如果要在规则选项设置值中使用它们，必须要进行转义。例如::
 
 	    msg:"Message with semicolon\;";
 
-    As a consequence, you must also escape the backslash, as it functions
-    as an escape character.
+    因此，您还必须转义反斜杠，因为它充当转义字符。 
 
-The rest of this chapter in the documentation documents the use of the various keywords.
+本章的剩下部分记录各种关键字的使用.
 
-Some generic details about keywords follow.
+关键字的一些通用细节如下.
 
 .. _rules-modifiers:
 
-Modifier Keywords
+修饰符关键字
 ~~~~~~~~~~~~~~~~~
 
-Some keywords function act as modifiers. There are two types of modifiers.
+一些关键字会当作修饰符来工作。有两种类型的修饰符：
 
-* The older style **'content modifiers'** look back in the rule, e.g.::
+* 老一点的 **'content修饰符'** 可以回顾一下规则, 如::
 
       alert http any any -> any any (content:"index.php"; http_uri; sid:1;)
 
-  In the above example the pattern 'index.php' is modified to inspect the HTTP uri buffer.
+  在上面的例子中，模式 'index.php' 被强行用来检查HTTP uri缓冲区，而不是整个数据包内容.
 
-* The more recent type is called the **'sticky buffer'**. It places the buffer name first and all keywords following it apply to that buffer, for instance::
+* 比较新的类型被称作 **'sticky buffer'**. 它将缓冲区名称放在第一位，其后面的所有关键字都作用于该缓冲区, 例如::
 
       alert http any any -> any any (http_response_line; content:"403 Forbidden"; sid:1;)
 
-  In the above example the pattern '403 Forbidden' is inspected against the HTTP response line because it follows the ``http_response_line`` keyword.
+  在上面的例子中，模式 '403 Forbidden' 被用来检查HTTP响应头，这是因为他跟在 ``http_response_line`` 关键字后面.
 
 .. _rules-normalized-buffers:
 
-Normalized Buffers
+标准化缓冲区
 ~~~~~~~~~~~~~~~~~~
-A packet consists of raw data. HTTP and reassembly make a copy of
-those kinds of packets data. They erase anomalous content, combine
-packets etcetera. What remains is a called the 'normalized buffer':
+数据包由原始数据组成,HTTP和重组会复制这些类型的数据包数据。它们清除异常内容，组合数据包等。 余下部分叫做“标准化缓冲区”:
 
 .. image:: normalized-buffers/normalization1.png
 
-Because the data is being normalized, it is not what it used to be; it
-is an interpretation.  Normalized buffers are: all HTTP-keywords,
-reassembled streams, TLS-, SSL-, SSH-, FTP- and dcerpc-buffers.
+因为数据正在规范化，所以它的内容发生了变化，这种规范化也是一种解析。 规范化缓冲区包括：所有HTTP关键字，重组流，TLS-，SSL-，SSH-，FTP-和dcerpc-缓冲区。
 
-Note that there are some exceptions, e.g. the ``http_raw_uri`` keyword.
-See :ref:`rules-http-uri-normalization` for more information.
+请注意有一些例外情况，例如 ``http_raw_uri``关键字，
+更多信息参见 :ref:`rules-http-uri-normalization` 
