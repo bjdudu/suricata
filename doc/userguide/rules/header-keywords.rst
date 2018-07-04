@@ -1,31 +1,23 @@
 
 .. role:: example-rule-emphasis
 
-IP Keywords
+IP关键字
 -----------
 
 ttl
 ^^^
 
-The ttl keyword is used to check for a specific IP time-to-live value
-in the header of a packet. The format is::
+ttl关键字用于检查IP数据包标头中time-to-live值， 其格式是::
 
   ttl:<number>
 
-For example::
+例如::
 
   ttl:10;
 
-At the end of the ttl keyword you can enter the value on which you
-want to match.  The Time-to-live value determines the maximal amount
-of time a packet can be in the Internet-system. If this field is set
-to 0, then the packet has to be destroyed. The time-to-live is based
-on hop count. Each hop/router the packet passes subtracts one of the
-packet TTL counter. The purpose of this mechanism is to limit the
-existence of packets so that packets can not end up in infinite
-routing loops.
+在ttl关键字的末尾，您可以输入要匹配的值。Time-to-live值决定定数据包在网络中传输的最长时间，如果此字段设置为0，则必须销毁数据包，time-to-live基于跳数，数据包每经过一跳，TTL值就减一。这个机制的目的是限制数据包无限循环路由。
 
-Example of the ttl keyword in a rule:
+规则中ttl关键字例子:
 
 .. container:: example-rule
 
@@ -33,35 +25,32 @@ Example of the ttl keyword in a rule:
 
 ipopts
 ^^^^^^
-With the ipopts keyword you can check if a specific IP option is
-set. Ipopts has to be used at the beginning of a rule. You can only
-match on one option per rule. There are several options on which can
-be matched. These are:
+ipopts关键字用来检查特定的IP选项是否设定。Ipopts必须在规则的开头使用，每条规则只能匹配一个选项。 这些选项包括:
 
 =========  =============================
-IP Option  Description
+IP选项      描述
 =========  =============================
-rr         Record Route
-eol        End of List
-nop        No Op
-ts         Time Stamp
-sec        IP Security
-esec       IP Extended Security
-lsrr       Loose Source Routing
-ssrr       Strict Source Routing
-satid      Stream Identifier
-any        any IP options are set
+rr         记录路由
+eol        列表结束
+nop        无操作
+ts         时间戳
+sec        IP安全
+esec       IP安全扩展
+lsrr       宽松源路由选项
+ssrr       严格源路由选项
+satid      流标识符
+any        任意IP选项
 =========  =============================
 
-Format of the ipopts keyword::
+ipopts关键字格式::
 
   ipopts: <name>
 
-For example::
+例如::
 
   ipopts: lsrr;
 
-Example of ipopts in a rule:
+规则中使用ipopts的例子:
 
 .. container:: example-rule
 
