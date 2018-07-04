@@ -1,24 +1,24 @@
-Meta Keywords
+元关键字
 =============
 
 .. role:: example-rule-emphasis
 
-Meta-settings have no effect on Suricata's inspection; they do have an effect on the way Suricata reports events.
+元关键字设置对Suricata的检测没有影响; 但是它却对Suricata的事件输出有影响。
 
-msg (message)
+msg (消息)
 -------------
-The keyword msg gives textual information about the signature and the possible alert.
+msg关键字指定规则产生的告警文本信息。
 
-The format of msg is::
+msg格式::
 
-  msg: "some description";
+  msg: "一些描述信息";
 
-Examples::
+例如::
 
   msg:"ATTACK-RESPONSES 403 Forbidden";
   msg:"ET EXPLOIT SMB-DS DCERPC PnP bind attempt";
 
-To continue the example of the previous chapter, this is the keyword in action in an actual rule:
+继续上一章的例子, 这是实际规则中的关键字:
 
 .. container:: example-rule
 
@@ -26,21 +26,21 @@ To continue the example of the previous chapter, this is the keyword in action i
 
 .. tip::
 
-   It is convention to make the first part of the signature uppercase and show the class of the signature.
+   一般习惯于将规则选项的第一部分大写，并且用来表示规则类型。
 
-   It is also convention that ``msg`` is made the first keyword in the signature.
+   同样习惯于将 ``msg`` 作为第一个规则选项关键字。
 
-.. note:: The following characters must be escaped inside the msg:
+.. note:: 在msg中下列字符必须转义:
 	      ``;`` ``\`` ``"``
 
-sid (signature ID)
+sid (规则ID)
 ------------------
 
-The keyword sid gives every signature its own id. This id is stated with a number. The format of sid is::
+sid关键字指定每条规则的id号，这个id用一个数字来表示，其格式是::
 
   sid:123;
 
-Example of sid in a signature:
+规则中sid的例子:
 
 .. container:: example-rule
 
@@ -48,19 +48,16 @@ Example of sid in a signature:
 
 .. tip::
 
-   It is convention that the signature ``sid`` is provided as the last keyword (or second-to-last if there is a ``rev``) of the signature.
+   一般习惯于将规则 ``sid`` 放到最后一个规则选项关键字 (或者如果有 ``rev``的话，就放到倒数第二个)。
 
 rev (revision)
 --------------
-The sid keyword is almost every time accompanied by rev. Rev
-represents the version of the signature. If a signature is modified,
-the number of rev will be incremented by the signature writers.  The
-format of rev is::
+sid关键字几乎每次都伴随着rev，Rev代表规则的版本。如果修改了规则，则规则编写者应当增加rev的数值。rev规则选项关键字的格式是::
 
   rev:123;
 
 
-Example of rev in a signature:
+规则中rev的例子:
 
 .. container:: example-rule
 
@@ -68,18 +65,13 @@ Example of rev in a signature:
 
 .. tip::
 
-    It is a convention that sid comes before rev, and both are the last
-    of all keywords.
+    一般习惯于将sid放在rev的前面, 并且它们一起放在所有关键字的最后。
 
-gid (group ID)
+gid (组ID)
 --------------
-The gid keyword can be used to give different groups of signatures
-another id value (like in sid). Suricata uses by default gid 1. It is
-possible to modify this. It is not usual that it will be changed, and
-changing it has no technical implications. You can only notice it in
-the alert.
+gid关键字可用于为不同的签名组提供另一个id值（像sid一样）。 Suricata默认使用gid 1，我们可以修改这个gid。它通常不会被改变，改变它没有技术含义。你只能在告警中看到它。
 
-Example of gid in an alert of fast.log. In the part [1:2008124:2], 1 is the gid (2008124 is the the sid and 2 the rev).
+fast.log告警中的gid示例。 在[1:2008124:2]中，1是gid（2008124是sid，2是rev）。
 
 .. container:: example-rule
 
@@ -89,29 +81,23 @@ Example of gid in an alert of fast.log. In the part [1:2008124:2], 1 is the gid 
 
 classtype
 ---------
-The classtype keyword gives information about the classification of
-rules and alerts. It consists of a short name, a long name and a
-priority. It can tell for example whether a rule is just informational
-or is about a hack etcetera. For each classtype, the
-classification.config has a priority which will be used in the rule.
+classtype关键字提供有关规则和警报分类的信息，它由短名称，长名称和优先级组成，它用来标识规则是仅仅是信息性的还是关于黑客的，classification.config指定了规则中使用的每个classtype的优先级。
 
-Example classtype definition::
+classtype定义举例::
 
   config classification: web-application-attack,Web Application Attack,1
   config classification: not-suspicious,Not Suspicious Traffic,3
 
-Now when we have defined this in the configuration, we can use the classtypes
-in our rules. A rule with classtype web-application-attack will be assigned
-a priority of 1 and the alert will contain 'Web Application Attack':
+现在我们在配置中定义了这两个classtypes，就可以在规则中使用它们了。一条classtype为web-application-attack的规则，它的优先级被设置为1，并且产生的告警内容中会包含 'Web Application Attack':
 
 =======================  ======================  ===========
-classtype                Alert                   Priority
+classtype                告警                     优先级
 =======================  ======================  ===========
 web-application-attack   Web Application Attack  1
 not-suspicious           Not Suspicious Traffic  3
 =======================  ======================  ===========
 
-Our continuing example has also a classtype, this one of trojan-activity:
+接下来的例子也包含classtype, 它是 trojan-activity:
 
 .. container:: example-rule
 
@@ -120,73 +106,53 @@ Our continuing example has also a classtype, this one of trojan-activity:
 
 .. tip::
 
-    It is a convention that classtype comes before sid and rev and after
-    the rest of the keywords.
+    通常习惯于将classtype放在sid and rev前面，其它的关键字后面.
 
-reference
+参考
 ---------
 
-The reference keywords direct to places where information about the
-signature and about the problem the signature tries to address, can be
-found. The reference keyword can appear multiple times in a signature.
-This keyword is meant for signature-writers and analysts who
-investigate why a signature has matched. It has the following format::
+参考关键字表示指向规则有关的信息以及试图解决规则相关问题的位置。参考关键字可以在规则中多次出现，此关键字适用于规则编写者和分析师，他们会研究规则匹配的原因。 它的格式如下::
 
   reference: type, reference
 
-A typical reference to www.info.com would be::
+一个典型的指向www.info.com的参考是这样的::
 
   reference: url, www.info.com
 
-However, there are also several systems that can be used as a reference. A
-commonly known example is the CVE-database, that assigns numbers to
-vulnerabilities. To prevent you from typing the same URL over and over
-again, you can use something like this::
+但是，参考类型有很多种，一个众所周知的例子是CVE数据库，它为漏洞分配编号。为了避免你多次输入相同URL的麻烦，你可以这样来定义参考::
 
   reference: cve, CVE-2014-1234
 
-This would make a reference to http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1234.
-All reference types are defined in the reference.config configuration file.
+这会定义一个指向http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1234 的参考。
+所有参考类型都在reference.config配置文件中定义。
 
-Our continuing example also has a reference:
+下面的例子也定义了一个参考:
 
 .. container:: example-rule
 
     drop tcp $HOME_NET any -> $EXTERNAL_NET any (msg:"ET TROJAN Likely Bot Nick in IRC (USA +..)"; flow:established,to_server; flowbits:isset,is_proto_irc; content:"NICK "; pcre:"/NICK .*USA.*[0-9]{3,}/i"; :example-rule-emphasis:`reference:url,doc.emergingthreats.net/2008124;` classtype:trojan-activity; sid:2008124; rev:2;)
 
 
-priority
+优先级
 --------
-The priority keyword comes with a mandatory numeric value which can
-range from 1 till 255. The numbers 1 to 4 are most often used.
-Signatures with a higher priority will be examined first. The highest
-priority is 1.  Normally signatures have already a priority through
-classtype. This can be overruled with the keyword priority.  The
-format of priority is::
+优先级关键字用一个从1到255数字表示，但是通常只使用从1到4，高优先级的规则将会优先检查，最高优先级是1。classtype中指定的优先级会被priority关键字优先级覆盖，priority关键字格式如下:
 
   priority:1;
 
 metadata
 --------
 
-The meatadata keyword allows additional, non-functional information to
-be added to the signature. While the format is free-form, it is
-recommended to stick to key, value pairs as Suricata can include these
-in eve alerts. The format is::
+meatadata关键字允许将其他非功能性信息添加到规则中，虽然它的格式很自由，但建议使用key, value键值对，这是因为Suricata可以在eve告警中包含这些值。其格式是::
 
   metadata: key value;
   metadata: key value, key value;
 
 target
 ------
-The target keyword allows the rules writer to specify which side of the
-alert is the target of the attack. If specified, the alert event is enhanced
-to contain information about source and target.
+target关键字允许规则编写者指定告警的哪一侧是攻击的目标，如果指定了，告警事件中会包含有关源和目标的信息。
 
-The format is::
+其格式是::
 
    target:[src_ip|dest_ip]
 
-If the value is src_ip then the source IP in the generated event (src_ip
-field in JSON) is the target of the attack. If target is set to dest_ip
-then the target is the destination IP in the generated event.
+如果设置成src_ip，那么生成的事件(JSON中的src_ip字段) 中源IP就是攻击目标，如果设置成dest_ip，生成事件中目的IP就是攻击目标。
