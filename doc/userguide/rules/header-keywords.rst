@@ -59,15 +59,12 @@ ipopts关键字格式::
 sameip
 ^^^^^^
 
-Every packet has a source IP-address and a destination IP-address. It
-can be that the source IP is the same as the destination IP.  With the
-sameip keyword you can check if the IP address of the source is the
-same as the IP address of the destination. The format of the sameip
-keyword is::
+每个数据包都有一个源IP地址和一个目的IP地址。 可以是源IP与目的IP相同。 使用sameip关键字，您可以检查源IP地址是否与目的IP地址相同。 sameip
+关键字的格式是::
 
   sameip;
 
-Example of sameip in a rule:
+规则中使用sameip的例子:
 
 .. container:: example-rule
 
@@ -75,48 +72,39 @@ Example of sameip in a rule:
 
 ip_proto
 ^^^^^^^^
-With the ip_proto keyword you can match on the IP protocol in the
-packet-header. You can use the name or the number of the protocol.
-You can match for example on the following protocols::
+使用ip_proto关键字，您可以匹配数据包头中的IP协议。您可以使用协议的名称或编号来匹配下面的协议::
 
-   1     ICMP        Internet Control Message
-   6     TCP         Transmission Control Protocol
-  17     UDP         User Datagram
-  47     GRE         General Routing Encapsulation
-  50     ESP         Encap Security Payload for IPv6
-  51     AH          Authentication Header for Ipv6
+   1     ICMP        因特网控制消息协议
+   6     TCP         传输控制协议
+  17     UDP         用户数据报协议
+  47     GRE         通用路由封装协议
+  50     ESP         IPv6 Encap安全有效负载
+  51     AH          Ipv6身份验证标头
   58     IPv6-ICMP   ICMP for Ipv6
 
-For the complete list of protocols and their numbers see
+完整的协议和协议号列表请参考
 http://en.wikipedia.org/wiki/List_of_IP_protocol_numbers
 
-Example of ip_proto in a rule:
+规则中使用ip_proto的例子:
 
 .. container:: example-rule
 
     alert ip any any -> any any (msg:"GPL MISC IP Proto 103 PIM"; :example-rule-emphasis:`ip_proto:103;` reference:bugtraq,8211; reference:cve,2003-0567; classtype:non-standard-protocol; sid:2102189; rev:4;)
 
-The named variant of that example would be::
+例子中的命名变量为::
 
     ip_proto:PIM
 
 id
 ^^
 
-With the id keyword, you can match on a specific IP ID value.  The ID
-identifies each packet sent by a host and increments usually with one
-with each packet that is being send. The IP ID is used as a fragment
-identification number. Each packet has an IP ID, and when the packet
-becomes fragmented, all fragments of this packet have the same ID. In
-this way, the receiver of the packet knows which fragments belong to
-the same packet. (IP ID does not take care of the order, in that case
-offset is used. It clarifies the order of the fragments.)
+使用id关键字，您可以匹配特定的IP ID值。 ID标识主机发送的每个数据包，并且通常每发送一个数据包就递增一个数值。 IP ID用作片段标识号。 每个数据包都有一个IP ID，当数据包被分段时，该数据包的所有分段都具有相同的ID。 以这种方式，分组的接收器知道哪些分段属于同一数据包。 （IP ID不关心ID号顺序，分段重组时使用偏移来完成，它阐明了分段的顺序。）
 
-Format of id::
+id关键字格式为::
 
   id:<number>;
 
-Example of id in a rule:
+规则中使用id的例子:
 
 .. container:: example-rule
 
@@ -124,12 +112,9 @@ Example of id in a rule:
 
 geoip
 ^^^^^
-The geoip keyword enables (you) to match on the source, destination or
-source and destination IP addresses of network traffic, and to see to
-which country it belongs. To be able to do this, Suricata uses GeoIP
-API of Maxmind.
+geoip关键字使您能够匹配源和目标IP地址来自哪个网络以及它所属的国家/地区。Suricata使用Maxmind的GeoIP API来实现这个功能。
 
-The syntax of geoip::
+geoip的语法格式为::
 
   geoip: src, RU;
   geoip: both, CN, RU;
@@ -137,16 +122,14 @@ The syntax of geoip::
   geoip: both, US, CA, UK;
   geoip: any, CN, IR;
 
-So, you can see you can use the following to make clear on which
-direction you would like to match::
+因此，您可以使用以下标识符来明确匹配的方向::
 
-  both: both directions have to match with the given geoip (geopip’s)
-  any: one of the directions have to match with the given geoip (’s).
-  dest: if the destination matches with the given geoip.
-  src: the source matches with the given geoip.
+  both: 使用指定geoip (geopip’s)来匹配双向
+  any: 使用指定geoip (’s)来匹配任意一个方向.
+  dest: 使用指定geoip来匹配目的.
+  src: 使用指定geoip来匹配源.
 
-The keyword only supports IPv4. As it uses the GeoIP API of Maxmind,
-libgeoip must be compiled in.
+这个关键字仅支持IPv4. 由于他使用了Maxmind的GeoIP API, 必须将libgeoip编译入suricata.
 
 fragbits (IP fragmentation)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -158,7 +141,7 @@ fragmentation mechanism. During routing of messages from one Internet
 module to the other, it can occur that a packet is bigger than the
 maximal packet size a network can process. In that case, a packet can
 be send in fragments. This maximum of the packet size is called
-Maximal Transmit Unit (MTU).
+Maximal Transmit Unit (MTU)使用fragbits关键字，可以检查IP头中是否设置了分段和保留位。 fragbits关键字应放在规则的开头。 Fragbits用于修改碎片机制。 在将消息从一个Internet模块路由到另一个Internet模块期间，可能发生数据包大于网络可以处理的最大数据包大小。 在这种情况下，可以分段发送数据包。 数据包大小的最大值称为最大传输单位（MTU）.
 
 You can match on the following bits::
 
