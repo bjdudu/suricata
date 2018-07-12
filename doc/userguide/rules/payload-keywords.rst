@@ -1,20 +1,17 @@
-Payload Keywords
+Payload关键字
 ================
 .. role:: example-rule-emphasis
 
-Payload keywords inspect the content of the payload of a packet or
-stream.
+Payload关键字检查数据包或流的有效载荷的内容。
 
 content
 -------
 
-The content keyword is very important in signatures. Between the
-quotation marks you can write on what you would like the signature to
-match. The most simple format of content is::
+content关键字在规则中非常重要，您可以在引号之间写下您希望规则匹配的content。 最简单的content格式是::
 
   content: ”............”;
 
-It is possible to use several contents in a signature.
+在一条规则中使用多个content是有可能的。
 
 Contents match on bytes. There are 256 different values of a byte
 (0-255). You can match on all characters; from a till z, upper case
@@ -23,20 +20,18 @@ are printable characters. For these bytes heximal notations are
 used. Many programming languages use 0x00 as a notation, where 0x
 means it concerns a binary value, however the rule language uses
 ``|00|`` as a notation.  This kind of notation can also be used for
-printable characters.
+printable characters.content基于字节进行匹配。一个字节有256个不同的值（0-255）。你可以匹配所有字符; 从a到z，大写和小写以及所有特殊标记。但并非所有字节都是可打印字符。对于这些字节，可以使用十六进制来表示，许多编程语言使用0x00表示法，这里0x表示它涉及二进制值，但是规则语言使用 ``|00|`` 表示法。 这种表示法也可用于可打印字符。
 
-Example::
+例如::
 
-  |61| is a
-  |61 61| is aa
-  |41| is A
-  |21| is !
-  |0D| is carriage return
-  |0A| is line feed
+  |61| 表示 a
+  |61 61| 表示 aa
+  |41| 表示 A
+  |21| 表示 !
+  |0D| 表示 回车符
+  |0A| 表示 换行符
 
-There are characters you can not use in the content because they are
-already important in the signature. For matching on these characters
-you should use the heximal notation. These are::
+有些字符不允许在content中使用，因此这些字符是规则定义表示符，要匹配这些字符，你必须使用十六进制表示法。这些字符包括::
 
   “	|22|
   ;	|3B|
