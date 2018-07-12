@@ -13,14 +13,7 @@ content关键字在规则中非常重要，您可以在引号之间写下您希�
 
 在一条规则中使用多个content是有可能的。
 
-Contents match on bytes. There are 256 different values of a byte
-(0-255). You can match on all characters; from a till z, upper case
-and lower case and also on all special signs. But not all of the bytes
-are printable characters. For these bytes heximal notations are
-used. Many programming languages use 0x00 as a notation, where 0x
-means it concerns a binary value, however the rule language uses
-``|00|`` as a notation.  This kind of notation can also be used for
-printable characters.content基于字节进行匹配。一个字节有256个不同的值（0-255）。你可以匹配所有字符; 从a到z，大写和小写以及所有特殊标记。但并非所有字节都是可打印字符。对于这些字节，可以使用十六进制来表示，许多编程语言使用0x00表示法，这里0x表示它涉及二进制值，但是规则语言使用 ``|00|`` 表示法。 这种表示法也可用于可打印字符。
+content基于字节进行匹配。一个字节有256个不同的值（0-255）。你可以匹配所有字符; 从a到z，大写和小写以及所有特殊标记。但并非所有字节都是可打印字符。对于这些字节，可以使用十六进制来表示，许多编程语言使用0x00表示法，这里0x表示它涉及二进制值，但是规则语言使用 ``|00|`` 表示法。 这种表示法也可用于可打印字符。
 
 例如::
 
@@ -38,72 +31,64 @@ printable characters.content基于字节进行匹配。一个字节有256个不�
   :	|3A|
   |	|7C|
 
-It is a convention to write the heximal notation in upper case characters.
+用大写字符来书写16进制符号是一种惯例。
 
-To write for instance ``http://`` in the content of a signature, you
-should write it like this: ``content: “http|3A|//”;`` If you use a
-heximal notation in a signature, make sure you always place it between
-pipes. Otherwise the notation will be taken literally as part of the
-content.
+例如，你要在规则的content中写 ``http://`` , 应当这样写: ``content: “http|3A|//”;`` 如果你在规则中使用16进制, 一定要这些字符放在管道符之间。否则16进制的内容会被当作content普通文本的一部分。
 
-A few examples::
+一些例子::
 
   content:“a|0D|bc”;
   content:”|61 0D 62 63|";
   content:”a|0D|b|63|”;
 
-It is possible to let a signature check the whole payload for a match with the content or to let it check specific parts of the payload. We come to that later.
-If you add nothing special to the signature, it will try to find a match in all the bytes of the payload.
+规则可以定义检查整个载荷与content匹配，或者仅检查载荷的特定部分，晚点我们会讨论这个问题。
+如果你没有在规则中定义特殊的选项，那么将在整个载荷中进行匹配。
 
 .. container:: example-rule
 
     drop tcp $HOME_NET any -> $EXTERNAL_NET any (msg:"ET TROJAN Likely Bot Nick in IRC (USA +..)"; flow:established,to_server; flowbits:isset,is_proto_irc; :example-rule-emphasis:`content:"NICK ";` pcre:"/NICK .*USA.*[0-9]{3,}/i"; reference:url,doc.emergingthreats.net/2008124; classtype:trojan-activity; sid:2008124; rev:2;)
 
 
-By default the pattern-matching is case sensitive. The content has to
-be accurate, otherwise there will not be a match.
+默认情况下，模式匹配区分大小写。content定义必须准确，否则不会匹配。
 
 .. image:: payload-keywords/content2.png
 
-Legend:
+图例:
 
 .. image:: payload-keywords/Legenda_rules.png
 
-It is possible to use the ! for exceptions in contents as well.
+同样，可以使用 ! 来表示content内容取反（例外情况）匹配。
 
-For example::
+例如::
 
   alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"Outdated Firefox on
   Windows"; content:"User-Agent|3A| Mozilla/5.0 |28|Windows|3B| ";
   content:"Firefox/3."; distance:0; content:!"Firefox/3.6.13";
   distance:-10; sid:9000000; rev:1;)
 
-You see ``content:!”Firefox/3.6.13”;``. This means an alert will be
-generated if the the used version of Firefox is not 3.6.13.
+如 ``content:!”Firefox/3.6.13”;``, 这意味着使用的Firefox版本不是3.6.13的时候，会产生一条报警。
 
-.. note:: The following characters must be escaped inside the content:
+.. note::  在content中，下列字符必须进行转义:
              ``;`` ``\`` ``"``
 
 nocase
 ------
 
-If you do not want to make a distinction between uppercase and
-lowercase characters, you can use nocase. The keyword nocase is a
-content modifier.
+如果您不想区分大小写字符，可以使用nocase。nocase关键字是content修饰符。
 
-The format of this keyword is::
+这个关键字的格式是::
 
   nocase;
 
-You have to place it after the content you want to modify, like::
+你必须把它放在你想修饰的content后面, 像这样::
 
   content: “abc”; nocase;
 
-Example nocase:
+nocase例子:
 
 .. image:: payload-keywords/content3.png
 
-It has no influence on other contents in the signature.
+它对规则中的其他内容没有影响。
 
 depth
 -----
