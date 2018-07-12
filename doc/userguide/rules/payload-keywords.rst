@@ -93,54 +93,45 @@ nocase例子:
 depth
 -----
 
-The depth keyword is a absolute content modifier. It comes after the
-content. The depth content modifier comes with a mandatory numeric
-value, like::
+depth关键字是一个绝对content修饰符，他跟在content后面。depth作为content修饰符必须要跟一个数字, 如::
 
   depth:12;
 
-The number after depth designates how many bytes from the beginning of
-the payload will be checked.
+depth后的数字表示将检查载荷从开头到多少字节的内容。
 
-Example:
+如:
 
 .. image:: payload-keywords/content4.png
 
 startswith
 ----------
 
-The ``startswith`` keyword is similar to ``depth``. It takes no arguments
-and must follow a ``content`` keyword. It modifies the ``content`` to match
-exactly at the start of a buffer.
+ ``startswith`` 关键字类似于 ``depth``. 它没有任何参数并且必须跟在一个 ``content`` 关键字后面。它表示 ``content`` 将从一个缓冲区的开头进行匹配。
 
-Example::
+如::
 
     content:"GET|20|"; startswith;
 
-``startswith`` is a short hand notation for::
+``startswith`` 相当于下面规则的简写::
 
     content:"GET|20|"; depth:4; offset:0;
 
-``startswith`` cannot be mixed with ``depth``, ``offset``, ``within`` or
-``distance`` for the same pattern.
+对于同一个content定义， ``startswith`` 不能和 ``depth``, ``offset``, ``within`` 或 ``distance`` 写在一起。
 
 offset
 ------
 
-The offset keyword designates from which byte in the payload will be
-checked to find a match.  For instance offset:3; checks the fourth
-byte and further.
+关键字指定从载荷中的哪个字节开始查找匹配。例如offset:3; 从第四个字节开始查找匹配。
 
 .. image:: payload-keywords/content5.png
 
-The keywords offset and depth can be combined and are often used together.
+offset和depth关键字可以并且经常组合在一起使用。
 
-For example::
+例如::
 
   content:“def”; offset:3; depth:3;
 
-If this was used in a signature, it would check the payload from the
-third byte till the sixth byte.
+如果在规则中使用图中组合，那么将检查载荷中的第四到第六个字节。
 
 .. image:: payload-keywords/content6.png
 
@@ -148,18 +139,9 @@ third byte till the sixth byte.
 distance
 --------
 
-The keyword distance is a relative content modifier. This means it
-indicates a relation between this content keyword and the content
-preceding it. Distance has its influence after the preceding match.
-The keyword distance comes with a mandatory numeric value. The value
-you give distance, determines the byte in the payload from which will
-be checked for a match relative to the previous match.  Distance only
-determines where Suricata will start looking for a pattern.  So,
-distance:5; means the pattern can be anywhere after the previous
-match + 5 bytes. For limiting how far after the last match Suricata
-needs to look, use 'within'.
+distance关键字是相对content修饰符。意思是它表示当前content关键字与前一个content之间的关系。跟在前一个匹配后面，Distance有它的作用。distance关键字必须要跟一个数字。你指定的distance数值, 决定了载荷中从上一个匹配到当前匹配之间的字节数。Distance仅仅指定Suricata从哪里开始查找匹配。因此， distance:5; 表示可以在上一个匹配后面5字节的任何地方进行匹配。为了限制Suricata匹配载荷中的最后字节，使用 'within' 关键字。
 
-Examples of distance:
+distance的例子:
 
 .. image:: payload-keywords/distance5.png
 
@@ -169,10 +151,7 @@ Examples of distance:
 
 .. image:: payload-keywords/distance1.png
 
-Distance can also be a negative number. It can be used to check for
-matches with partly the same content (see example) or for a content
-even completely before it. This is not very often used though. It is
-possible to attain the same results with other keywords.
+Distance也可以是一个负值。这用来检测多个匹配之间部分相同的内容(参考例子)或者是完全在前一匹配之前的内容。但是这并不经常使用，因为有可能使用其它关键字来达到相同的目的。
 
 .. image:: payload-keywords/distance3.png
 
