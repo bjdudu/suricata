@@ -98,7 +98,7 @@ http://en.wikipedia.org/wiki/List_of_IP_protocol_numbers
 id
 ^^
 
-使用id关键字，您可以匹配特定的IP ID值。 ID标识主机发送的每个数据包，并且通常每发送一个数据包就递增一个数值。 IP ID用作片段标识号。 每个数据包都有一个IP ID，当数据包被分段时，该数据包的所有分段都具有相同的ID。 以这种方式，分组的接收器知道哪些分段属于同一数据包。 （IP ID不关心ID号顺序，分段重组时使用偏移来完成，它阐明了分段的顺序。）
+使用id关键字，您可以匹配指定的IP ID值。 ID标识主机发送的每个数据包，并且通常每发送一个数据包就递增一个数值。 IP ID用作片段标识号。 每个数据包都有一个IP ID，当数据包被分段时，该数据包的所有分段都具有相同的ID。 以这种方式，分组的接收器知道哪些分段属于同一数据包。 （IP ID不关心ID号顺序，分段重组时使用偏移来完成，它阐明了分段的顺序。）
 
 id关键字格式为::
 
@@ -131,36 +131,28 @@ geoip的语法格式为::
 
 这个关键字仅支持IPv4. 由于他使用了Maxmind的GeoIP API, 必须将libgeoip编译入suricata.
 
-fragbits (IP fragmentation)
+fragbits (IP分段)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-With the fragbits keyword, you can check if the fragmentation and
-reserved bits are set in the IP header. The fragbits keyword should be
-placed at the beginning of a rule. Fragbits is used to modify the
-fragmentation mechanism. During routing of messages from one Internet
-module to the other, it can occur that a packet is bigger than the
-maximal packet size a network can process. In that case, a packet can
-be send in fragments. This maximum of the packet size is called
-Maximal Transmit Unit (MTU)使用fragbits关键字，可以检查IP头中是否设置了分段和保留位。 fragbits关键字应放在规则的开头。 Fragbits用于修改碎片机制。 在将消息从一个Internet模块路由到另一个Internet模块期间，可能发生数据包大于网络可以处理的最大数据包大小。 在这种情况下，可以分段发送数据包。 数据包大小的最大值称为最大传输单位（MTU）.
+使用fragbits关键字，可以检查IP头中是否设置了分段和保留位。fragbits关键字应放在规则的开头。Fragbits用于IP分段机制。 在将数据包从一个Internet网络路由到另一个Internet网络期间，可能发生数据包大于网络可以处理的最大数据包长度的情况。 在这种情况下，可以分段发送数据包。网络中数据包长度的最大值称为最大传输单位（MTU）.
 
-You can match on the following bits::
+您可以匹配以下比特位::
 
-  M - More Fragments
-  D - Do not Fragment
-  R - Reserved Bit
+  M - 更多分段
+  D - 不要分段
+  R - 保留位
 
-Matching on this bits can be more specified with the following
-modifiers::
+可以使用以下修饰符更多地指定对此位的匹配::
 
-  +         match on the specified bits, plus any others
-  *         match if any of the specified bits are set
-  !         match if the specified bits are not set
+  +         匹配指定的位，以及任何其他位
+  *         如果设置了任何指定位，则匹配
+  !         如果未设置指定的位，则匹配
 
-Format::
+格式::
 
   fragbits:[*+!]<[MDR]>;
 
-Example of fragbits in a rule:
+规则中使用fragbits的例子:
 
 .. container:: example-rule
 
@@ -169,59 +161,42 @@ Example of fragbits in a rule:
 fragoffset
 ^^^^^^^^^^
 
-With the fragoffset keyword you can match on specific decimal values
-of the IP fragment offset field. If you would like to check the first
-fragments of a session, you have to combine fragoffset 0 with the More
-Fragment option. The fragmentation offset field is convenient for
-reassembly. The id is used to determine which fragments belong to
-which packet and the fragmentation offset field clarifies the order of
-the fragments.
+使用fragoffset关键字，您可以匹配IP分段偏移字段的指定十进制值。 如果要检查会话的第一个分段，则必须将fragoffset 0与More Fragment选项组合在一起来使用。分段的偏移字段便于重组。 id用于确定哪些分段属于哪个数据包，而分段的偏移字段用于说明分段的顺序.
 
-You can use the following modifiers::
+您可以使用以下修饰符::
 
-  <       match if the value is smaller than the specified value
-  >       match if the value is greater than the specified value
-  !       match if the specified value is not present
+  <       如果小于指定值，则匹配
+  >       如果大于指定值，则匹配
+  !       如果指定的值不存在则匹配
 
-Format of fragoffset::
+fragoffset格式::
 
   fragoffset:[!|<|>]<number>;
 
-Example of fragoffset in a rule:
+规则中使用fragoffset的例子:
 
 .. container:: example-rule
 
    alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"ET EXPLOIT Invalid non-fragmented packet with fragment offset>0"; fragbits: M; :example-rule-emphasis:`fragoffset: >0;` reference:url,doc.emergingthreats.net/bin/view/Main/2001022; classtype:bad-unknown; sid:2001022; rev:5; metadata:created_at 2010_07_30, updated_at 2010_07_30;)
 
-TCP keywords
+TCP关键字
 ------------
 
 seq
 ^^^
-The seq keyword can be used in a signature to check for a specific TCP
-sequence number. A sequence number is a number that is generated
-practically at random by both endpoints of a TCP-connection. The
-client and the server both create a sequence number, which increases
-with one with every byte that they send. So this sequence number is
-different for both sides. This sequence number has to be acknowledged
-by both sides of the connection. Through sequence numbers, TCP
-handles acknowledgement, order and retransmission. Its number
-increases with every data-byte the sender has send. The seq helps
-keeping track of to what place in a data-stream a byte belongs. If the
-SYN flag is set at 1, than the sequence number of the first byte of
-the data is this number plus 1 (so, 2).
+可以在规则中使用seq关键字来检查指定的TCP序列号。序列号是TCP连接两端随机生成的数字。客户端和服务器都创建一个序列号，随着各方发送字节的增加而增加，所以双方这个序列号是不同的。该序列号必须由连接的双方确认。TCP通过序列号处理数据包的确认、顺序和重传。它的数字着发送方发送的每个数据字节而增加。seq有助于跟踪字节在所属的数据流中处于哪个位置。如果SYN标志设置为1，则数据的第一个字节的序列号是此数字加1（以此类推，2）
 
-Example::
+例子::
 
   seq:0;
 
-Example of seq in a signature:
+规则中使用seq的例子:
 
 .. container:: example-rule
 
     alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL SCAN NULL"; flow:stateless; ack:0; flags:0; :example-rule-emphasis:`seq:0;` reference:arachnids,4; classtype:attempted-recon; sid:2100623; rev:7;)
 
-Example of seq in a packet (Wireshark):
+数据包中seq的例子 (Wireshark):
 
 .. image:: header-keywords/Wireshark_seq.png
 
@@ -229,117 +204,88 @@ Example of seq in a packet (Wireshark):
 ack
 ^^^
 
-The ack is the acknowledgement of the receipt of all previous
-(data)-bytes send by the other side of the TCP-connection. In most
-occasions every packet of a TCP connection has an ACK flag after the
-first SYN and a ack-number which increases with the receipt of every
-new data-byte. The ack keyword can be used in a signature to check
-for a specific TCP acknowledgement number.
+ack是对TCP连接另一端发送的所有先前（数据）字节的接收的确认。 在大多数情况下，TCP连接的每个数据包在第一个SYN之后都有一个ACK标志，而ack-number随着每个新数据字节的接收而增加。 可以在规则中使用ack关键字来检查指定的TCP确认号.
 
-Format of ack::
+ack的格式::
 
   ack:1;
 
-Example of ack in a signature:
+规则中使用ack的例子:
 
 .. container:: example-rule
 
     alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL SCAN NULL"; flow:stateless; :example-rule-emphasis:`ack:0;` flags:0; seq:0; reference:arachnids,4; classtype:attempted-recon; sid:2100623; rev:7;)
 
-Example of ack in a packet (Wireshark):
+数据包中ack的例子(Wireshark):
 
 .. image:: header-keywords/Wireshark_ack.png
 
 window
 ^^^^^^
 
-The window keyword is used to check for a specific TCP window size.
-The TCP window size is a mechanism that has control of the
-data-flow. The window is set by the receiver (receiver advertised
-window size) and indicates the amount of bytes that can be
-received. This amount of data has to be acknowledged by the receiver
-first, before the sender can send the same amount of new data. This
-mechanism is used to prevent the receiver from being overflowed by
-data. The value of the window size is limited and can be 2 to 65.535
-bytes. To make more use of your bandwidth you can use a bigger
-TCP-window.
+window关键字用于检查指定的TCP窗口大小。TCP窗口大小是一种控制数据流的机制。窗口由接收端设置（接收端通告的窗口大小），并指示可以接收的字节数。在发送方可以发送相同数量的新数据之前，接收端必须先确认此数据量。该机制用于防止接收端数据溢出。窗口大小的值是有限的，可以是2到65535字节。为了更多地利用带宽，您可以使用更大的TCP窗口。
 
-The format of the window keyword::
+window关键字格式::
 
   window:[!]<number>;
 
-Example of window in a rule:
+规则中使用window的例子:
 
 .. container:: example-rule
 
     alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL DELETED typot trojan traffic"; flow:stateless; flags:S,12; :example-rule-emphasis:`window:55808;` reference:mcafee,100406; classtype:trojan-activity; sid:2182; rev:8;)
 
-ICMP keywords
+ICMP关键字
 -------------
 
-ICMP (Internet Control Message Protocol) is a part of IP. IP at itself
-is not reliable when it comes to delivering data (datagram). ICMP
-gives feedback in case problems occur. It does not prevent problems
-from happening, but helps in understanding what went wrong and
-where. If reliability is necessary, protocols that use IP have to take
-care of reliability themselves. In different situations ICMP messages
-will be send. For instance when the destination is unreachable, if
-there is not enough buffer-capacity to forward the data, or when a
-datagram is send fragmented when it should not be, etcetera. More can
-be found in the list with message-types.
+ICMP（Internet控制消息协议）是IP协议栈的一部分。 在传输数据（数据报）方面，IP协议本身并不可靠。ICMP协议可以在出现问题时提供反馈。它不会阻止问题的发生，但有助于理解出错的原因和地点。如果需要可靠性，使用IP的协议必须自己处理可靠性。很多情况下会发送ICMP消息。 例如，当目的地不可达时，如果没有足够的缓冲容量来转发数据，或者当数据报发送时不能进行分段，则等等。 更多信息可参考ICMP消息类型列表。
 
-There are four important contents of a ICMP message on which can be
-matched with corresponding ICMP-keywords. These are: the type, the
-code, the id and the sequence of a message.
+ICMP消息有四个重要内容，可以与相应的ICMP关键字匹配。 它们是：消息的类型，代码，id和序列号。
 
 itype
 ^^^^^
 
-The itype keyword is for matching on a specific ICMP type (number).
-ICMP has several kinds of messages and uses codes to clarify those
-messages. The different messages are distinct by different names, but
-more important by numeric values. For more information see the table
-with message-types and codes.
+itype关键字用于匹配指定的ICMP类型（数字）。ICMP有几种消息，并使用代码来表示这些消息。不同的消息由不同的名称区分，但更重要的是类型代码。 有关更多信息，请参阅包含消息类型和代码列表。
 
-The format of the itype keyword::
+itype关键字格式::
 
   itype:min<>max;
   itype:[<|>]<number>;
 
-Example
-This example looks for an ICMP type greater than 10::
+例如
+这个例子匹配类型代码大于10的ICMP数据包::
 
   itype:>10;
 
-Example of the itype keyword in a signature:
+规则中使用itype关键字的例子:
 
 .. container:: example-rule
 
     alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL SCAN Broadscan Smurf Scanner"; dsize:4; icmp_id:0; icmp_seq:0; :example-rule-emphasis:`itype:8;` classtype:attempted-recon; sid:2100478; rev:4;)
 
-The following lists all ICMP types known at the time of writing. A recent table can be found `at the website of IANA <https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml>`_
+下面列出了撰写本文时所有的已知ICMP类型。可以在 `IANA的网站 <https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml>`_ 找到最新的列表
 
 ==========  ==========================================================
-ICMP Type   Name
+ICMP类型     Name
 ==========  ==========================================================
-0           Echo Reply
-3           Destination Unreachable
-4           Source Quench
-5           Redirect
+0           回显应答
+3           目标不可达
+4           源端被关闭（基本流控制）
+5           重定向
 6           Alternate Host Address
-8           Echo
-9           Router Advertisement
-10          Router Solicitation
-11          Time Exceeded
-12          Parameter Problem
-13          Timestamp
-14          Timestamp Reply
-15          Information Request
-16          Information Reply
-17          Address Mask Request
-18          Address Mask Reply
+8           回显请求
+9           路由器通告
+10          路由器请求
+11          TTL为0
+12          参数错误
+13          时间戳请求
+14          时间戳请求应答
+15          信息请求
+16          信息请求应答
+17          地址掩码请求
+18          地址掩码应答
 30          Traceroute
-31          Datagram Conversion Error
+31          数据报转换错误
 32          Mobile Host Redirect
 33          IPv6 Where-Are-You
 34          IPv6 I-Am-Here
@@ -355,61 +301,57 @@ ICMP Type   Name
 icode
 ^^^^^
 
-With the icode keyword you can match on a specific ICMP code.  The
-code of a ICMP message clarifies the message. Together with the
-ICMP-type it indicates with what kind of problem you are dealing with.
-A code has a different purpose with every ICMP-type.
+使用icode关键字，您可以匹配指定的ICMP代码。 ICMP消息的代码阐明了该消息。与ICMP类型一起，它表明您正在处理什么样的问题。每个ICMP类型的代码都有不同的用途。
 
-The format of the icode keyword::
+icode关键字格式::
 
   icode:min<>max;
   icode:[<|>]<number>;
 
-Example:
-This example looks for an ICMP code greater than 5::
+例如:
+这个例子匹配ICMP代码大于5的数据包::
 
   icode:>5;
 
-Example of the icode keyword in a rule:
+规则中使用icode关键字的例子:
 
 .. container:: example-rule
 
     alert icmp $HOME_NET any -> $EXTERNAL_NET any (msg:"GPL MISC Time-To-Live Exceeded in Transit"; :example-rule-emphasis:`icode:0;` itype:11; classtype:misc-activity; sid:2100449; rev:7;)
 
-The following lists the meaning of all ICMP types. When a code is not listed,
-only type 0 is defined and has the meaning of the ICMP code, in the table above.
-A recent table can be found `at the website of IANA <https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml>`_
+下面列出了所有ICMP类型的含义。如果未列出类型，则仅定义代码0，并且具有上表中ICMP类型的含义。
+最新的列表可以在 `IANA的网站 <https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml>`_ 上找到。
 
 ==========  ==========  =========================================================================
-ICMP Code   ICMP Type   Description
+ICMP类型     ICMP代码    描述
 ==========  ==========  =========================================================================
-3           - 0         - Net Unreachable
-            - 1         - Host Unreachable
-            - 2         - Protocol Unreachable
-            - 3         - Port Unreachable
-            - 4         - Fragmentation Needed and Don't Fragment was Set
-            - 5         - Source Route Failed
-            - 6         - Destination Network Unknown
-            - 7         - Destination Host Unknown
-            - 8         - Source Host Isolated
-            - 9         - Communication with Destination Network is Administratively Prohibited
-            - 10        - Communication with Destination Host is Administratively Prohibited
-            - 11        - Destination Network Unreachable for Type of Service
-            - 12        - Destination Host Unreachable for Type of Service
-            - 13        - Communication Administratively Prohibited
-            - 14        - Host Precedence Violation
-            - 15        - Precedence cutoff in effect
-5           - 0         - Redirect Datagram for the Network (or subnet)
-            - 1         - Redirect Datagram for the Host
-            - 2         - Redirect Datagram for the Type of Service and Network
-            - 3         - Redirect Datagram for the Type of Service and Host
-9           - 0         - Normal router advertisement
-            - 16        - Doest not route common traffic
-11          - 0         - Time to Live exceeded in Transit
-            - 1         - Fragment Reassembly Time Exceeded
-12          - 0         - Pointer indicates the error
-            - 1         - Missing a Required Option
-            - 2         - Bad Length
+3           - 0         - 网络不可达
+            - 1         - 主机不可达
+            - 2         - 协议不可达
+            - 3         - 端口不可达
+            - 4         - 需要进行分片但设置了不分片
+            - 5         - 源站选路失败
+            - 6         - 目的网络未知
+            - 7         - 目的主机未知
+            - 8         - 源主机被隔离
+            - 9         - 目的网络通信被强制禁止
+            - 10        - 目的主机通信被强制禁止
+            - 11        - 由于服务类型TOS，网络不可达
+            - 12        - 由于服务类型TOS，主机不可达
+            - 13        - 由于过滤，通信被强制禁止
+            - 14        - 主机越权
+            - 15        - 优先中止生效
+5           - 0         - 对网络重定向
+            - 1         - 对主机重定向
+            - 2         - 对服务类型和网络重定向
+            - 3         - 对服务类型和主机重定向
+9           - 0         - 常规路由器通告
+            - 16        - 不路由常规流量
+11          - 0         - 传输期间TTL为0
+            - 1         - 数据报组装期间TTL为0
+12          - 0         - 坏的IP首部（包括各种差错）
+            - 1         - 缺少必需的选项
+            - 2         - 错误的长度
 40          - 0         - Bad SPI
             - 1         - Authentication Failed
             - 2         - Decompression Failed
@@ -422,22 +364,18 @@ ICMP Code   ICMP Type   Description
 icmp_id
 ^^^^^^^
 
-With the icmp_id keyword you can match on specific ICMP id-values.
-Every ICMP-packet gets an id when it is being send. At the moment the
-receiver has received the packet, it will send a reply using the same
-id so the sender will recognize it and connects it with the correct
-ICMP-request.
+使用icmp_id关键字，您可以匹配指定的ICMP id值。每个ICMP数据包在发送时都会获得一个id。在接收方收到数据包时，它将使用相同的ID发送回复，以便发送方识别它并将其与正确的ICMP请求关联。
 
-Format of the icmp_id keyword::
+icmp_id关键字格式::
 
   icmp_id:<number>;
 
-Example:
-This example looks for an ICMP ID of 0::
+例如:
+这个例子匹配ICMP ID为0的数据包::
 
   icmp_id:0;
 
-Example of the icmp_id keyword in a rule:
+规则中使用icmp_id关键字的例子:
 
 .. container:: example-rule
 
@@ -446,21 +384,18 @@ Example of the icmp_id keyword in a rule:
 icmp_seq
 ^^^^^^^^
 
-You can use the icmp_seq keyword to check for a ICMP sequence number.
-ICMP messages all have sequence numbers. This can be useful (together
-with the id) for checking which reply message belongs to which request
-message.
+您可以使用icmp_seq关键字检查ICMP序列号。 ICMP消息都有序列号。 这可以用于（与id一起）用于检查哪个回复消息属于哪个请求消息。
 
-Format of the icmp_seq keyword::
+icmp_seq关键字格式::
 
   icmp_seq:<number>;
 
-Example:
-This example looks for an ICMP Sequence of 0::
+例如:
+这个例子匹配ICMP序列号为0的数据包::
 
   icmp_seq:0;
 
-Example of icmp_seq in a rule:
+规则中使用icmp_seq关键字的例子:
 
 .. container:: example-rule
 
