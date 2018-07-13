@@ -158,24 +158,19 @@ Distance也可以是一个负值。这用来检测多个匹配之间部分相同
 within
 ------
 
-The keyword within is relative to the preceding match. The keyword
-within comes with a mandatory numeric value. Using within makes sure
-there will only be a match if the content matches with the payload
-within the set amount of bytes. Within can not be 0 (zero)
+within关键字是相对于前一个匹配而言的，它必须跟一个数字。使用within关键字需要确认的是，在载荷的前一个匹配到within设定的字节之间只有一个匹配。within不能设置为0。
 
-Example:
+如:
 
 .. image:: payload-keywords/within2.png
 
-Example of matching with within:
+使用within进行匹配的例子:
 
 .. image:: payload-keywords/within1.png
 
-The second content has to fall/come 'within 3 ' from the first content.
+第二部分内容（整体）必须距离第一部分内容3个字节以内。
 
-As mentioned before, distance and within can be very well combined in
-a signature. If you want Suricata to check a specific part of the
-payload for a match, use within.
+如前所述，distance和within可以在规则中很好地组合在一起。如果你希望Suricata检查载荷中某个特定的部分，使用within.
 
 .. image:: payload-keywords/within_distance.png
 
@@ -184,40 +179,30 @@ payload for a match, use within.
 isdataat
 --------
 
-The purpose of the isdataat keyword is to look if there is still data
-at a specific part of the payload.  The keyword starts with a number
-(the position) and then optional followed by 'relative' separated by a
-comma and the option rawbytes.  You use the word 'relative' to know if
-there is still data at a specific part of the payload relative to the
-last match.
+isdataat关键字的目的是检查载荷的特定部分是否存在数据。这个关键字以一个数字（表示位置）开始，然后可能跟上一个'relative'，以逗号与前面的数字分隔。这里的'relative'表示距离前一个匹配指定字节的位置是否存在数据。
 
-So you can use both examples::
+你可以像下面两个例子这样使用::
 
   isdataat:512;
 
   isdataat:50, relative;
 
-The first example illustrates a signature which searches for byte 512
-of the payload. The second example illustrates a signature searching
-for byte 50 after the last match.
+ 第一个例子表示将检查载荷的第512个字节是否存在数据，第二个例子表示载荷中上一个匹配后的第50个字节是否存在数据。
 
-You can also use the negation (!) before isdataat.
+你可以在isdataat前面使用 (!) 来表示不存在数据则匹配。
 
 .. image:: payload-keywords/isdataat1.png
 
 dsize
 -----
 
-With the dsize keyword, you can match on the size of the packet
-payload. You can use the keyword for example to look for abnormal
-sizes of payloads. This may be convenient in detecting buffer
-overflows.
+你可以使用dsize关键字来检查整个载荷的长度，如可以检查载荷异常的长度。这在检测缓冲区溢出时会非常有用。
 
-Format::
+格式::
 
   dsize:<number>;
 
-example of dsize in a rule:
+规则中使用dsize的例子:
 
 .. container:: example-rule
 
@@ -226,22 +211,18 @@ example of dsize in a rule:
 rpc
 ---
 
-The rpc keyword can be used to match in the SUNRPC CALL on the RPC
-procedure numbers and the RPC version.
+rpc关键字可用来在SUNRPC CALL中匹配RPC过程编号和RPC版本。
 
-You can modify the keyword by using a wild-card, defined with * With
-this wild-card you can match on all version and/or procedure numbers.
+您可以使用通配符表示匹配模式，使用*通配符可以匹配所有版本和/或过程编号。
 
-RPC (Remote Procedure Call) is an application that allows a computer
-program to execute a procedure on another computer (or address
-space). It is used for inter-process communication. See
+RPC（远程过程调用）是一种允许计算机程序在另一台计算机（或地址空间）上执行过程的应用程序,它用于进程间通信。参见 
 http://en.wikipedia.org/wiki/Inter-process_communication
 
-Format::
+格式::
 
   rpc:<application number>, [<version number>|*], [<procedure number>|*]>;
 
-Example of the rpc keyword in a rule:
+规则中使用rpc关键字的例子:
 
 .. container:: example-rule
 
@@ -250,87 +231,71 @@ Example of the rpc keyword in a rule:
 replace
 -------
 
-The replace content modifier can only be used in ips. It adjusts
-network traffic.  It changes the content it follows ('abc') into
-another ('def'), see example:
+replace作为content修饰符只能在ips中使用，它会改变网络流量，会将后面的内容从 ('abc') 替换成('def')。如:
 
 .. image:: payload-keywords/replace.png
 
 .. image:: payload-keywords/replace1.png
 
-The replace modifier has to contain as many characters as the content
-it replaces.  It can only be used with individual packets. It will not
-work for :ref:`rules-normalized-buffers` like HTTP uri or a content match in
-the reassembled stream.
+replace修饰符必须包含与其替换的内容一样多的字符,它只能用于单个数据包，不能在 :ref:`rules-normalized-buffers` 如HTTP uri中使用或重组流中进行匹配。
 
-The checksums will be recalculated by Suricata and changed after the
-replace keyword is being used.
+在使用replace关键字后，Suricata会重新计算校验和并更改。
 
 
-pcre (Perl Compatible Regular Expressions)
+pcre (兼容Perl的正则表达式)
 ------------------------------------------
 .. role:: example-rule-emphasis
 
-The keyword pcre matches specific on regular expressions. More
-information about regular expressions can be found here
+关键字pcre使用正则表达式进行特定匹配。有关正则表达式的更多信息，请访问此处
 http://en.wikipedia.org/wiki/Regular_expression.
 
-The complexity of pcre comes with a high price though: it has a
-negative influence on performance. So, to mitigate Suricata from
-having to check pcre often, pcre is mostly combined with 'content'. In
-that case, the content has to match first, before pcre will be
-checked.
+pcre复杂度高，并且对性能影响大。因此，为了避免Suricata经常进行pcre正则匹配，pcre大多与 'content'一起使用。在这种情况下，必须要先匹配content，再进行pcre检查（正则匹配）。
 
-Format of pcre::
+pcre的格式::
 
   pcre:"/<regex>/opts";
 
-Example of pcre. In this example there will be a match if the payload contains six
-numbers following::
+pcre的例子。在此示例中，如果载荷中包含六个数字，则将匹配::
 
   pcre:"/[0-9]{6}/";
 
-Example of pcre in a signature:
+规则中使用pcre的例子:
 
 .. container:: example-rule
 
     drop tcp $HOME_NET any -> $EXTERNAL_NET any (msg:"ET TROJAN Likely Bot Nick in IRC (USA +..)"; flow:established,to_server; flowbits:isset,is_proto_irc; content:"NICK "; :example-rule-emphasis:`pcre:"/NICK .*USA.*[0-9]{3,}/i";` reference:url,doc.emergingthreats.net/2008124; classtype:trojan-activity; sid:2008124; rev:2;)
 
-There are a few qualities of pcre which can be modified:
+有一些pcre的特性可以修改:
 
-* By default pcre is case-sensitive.
-* The . (dot) is a part of regex. It matches on every byte except for
-  newline characters.
-* By default the payload will be inspected as one line.
+* pcre默认是大小写敏感的.
+* .（点）是正则表达式的一部分，它匹配除换行符之外的每个字节.
+* 默认情况下，载荷将被当作一行来检查.
 
-These qualities can be modified with the following characters::
+可以使用以下字符修改这些特性::
 
-  i    pcre is case insensitive
-  s    pcre does check newline characters
-  m    can make one line (of the payload) count as two lines
+  i    pcre大小写不敏感
+  s    pcre会检查换行符
+  m    可以使一行（载荷）计为两行
 
-These options are perl compatible modifiers. To use these modifiers,
-you should add them to pcre, behind regex. Like this::
+这些选项是perl兼容修饰符。要使用这些修饰符，您应该将它们添加到正则表达式后面。像这样::
 
   pcre: “/<regex>/i”;
 
-*Pcre compatible modifiers*
+*Pcre兼容修饰符*
 
-There are a few pcre compatible modifiers which can change the
-qualities of pcre as well.  These are:
+还有一些pcre兼容的修饰符可以改变它的特性，它们是:
 
-* ``A``: A pattern has to match at the beginning of a buffer. (In pcre
-  ^ is similar to A.)
-* ``E``: Ignores newline characters at the end of the buffer/payload.
-* ``G``: Inverts the greediness.
+* ``A``: 模式必须从缓冲区的开头匹配. (在pcre中 ^ 跟这里的 A 类似.)
+* ``E``: 忽略缓冲区/载荷末尾的换行符.
+* ``G``: 切换贪婪模式匹配.
 
-.. note:: The following characters must be escaped inside the content:
+.. note:: 必须在内容中转义以下字符:
              ``;`` ``\`` ``"``
 
-Suricata's modifiers
+Suricata的修饰符
 ~~~~~~~~~~~~~~~~~~~~
 
-Suricata has its own specific pcre modifiers. These are:
+Suricata有自己特定的pcre修饰符。它们是:
 
 * ``R``: Match relative to the last pattern match. It is similar to distance:0;
 * ``U``: Makes pcre match on the normalized uri. It matches on the
