@@ -297,12 +297,8 @@ Suricata的修饰符
 
 Suricata有自己特定的pcre修饰符。它们是:
 
-* ``R``: Match relative to the last pattern match. It is similar to distance:0;
-* ``U``: Makes pcre match on the normalized uri. It matches on the
-  uri_buffer just like uricontent and content combined with http_uri.U
-  can be combined with /R. Note that R is relative to the previous
-  match so both matches have to be in the HTTP-uri buffer. Read more
-  about :ref:`HTTP URI Normalization <rules-http-uri-normalization>`.
+* ``R``: 相对于前一个模式匹配的匹配。类似于distance:0;
+* ``U``: 使用pcre匹配规范化的uri。它匹配uri_buffer就像uricontent和content组合http_uri.U一样，可以和/R一起组合使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-uri缓冲区内，更多信息请参考 :ref:`HTTP URI Normalization <rules-http-uri-normalization>`.
 
 .. image:: pcre/pcre3.png
 
@@ -312,62 +308,30 @@ Suricata有自己特定的pcre修饰符。它们是:
 
 .. image:: pcre/pcre6.png
 
-* ``I``: Makes pcre match on the HTTP-raw-uri. It matches on the same
-  buffer as http_raw_uri.  I can be combined with /R. Note that R is
-  relative to the previous match so both matches have to be in the
-  HTTP-raw-uri buffer. Read more about :ref:`HTTP URI Normalization <rules-http-uri-normalization>`.
+* ``I``: 在HTTP-raw-uri上进行pcre匹配，在http_raw_uri的同一个缓冲区上进行匹配，可以和/R一起使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-raw-uri缓冲区内，更多信息请参考 :ref:`HTTP URI Normalization <rules-http-uri-normalization>`.
 
-* ``P``: Makes pcre match on the HTTP- request-body. So, it matches on
-  the same buffer as http_client_body. P can be combined with /R. Note
-  that R is relative to the previous match so both matches have to be
-  in the HTTP-request body.
+* ``P``: 在HTTP-request-body上进行pcre匹配，在http_client_body的同一个缓冲区上进行匹配， P 可以和/R一起使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-request-body内.
 
-* ``Q``: Makes pcre match on the HTTP- response-body. So, it matches
-  on the same buffer as http_server_body. Q can be combined with
-  /R. Note that R is relative to the previous match so both matches
-  have to be in the HTTP-response body.
+* ``Q``: 在HTTP-response-body上进行pcre匹配，在http_server_body的同一个缓冲区上进行匹配， Q 可以和/R一起使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-response-body内.
 
-* ``H``: Makes pcre match on the HTTP-header.  H can be combined with
-  /R. Note that R is relative to the previous match so both matches have
-  to be in the HTTP-header body.
+* ``H``: 在HTTP-header上进行pcre匹配， Q 可以和/R一起使用。注意 H 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-response-header内.
 
-* ``D``: Makes pcre match on the unnormalized header. So, it matches
-  on the same buffer as http_raw_header.  D can be combined with
-  /R. Note that R is relative to the previous match so both matches
-  have to be in the HTTP-raw-header.
+* ``D``: 在非标准化的头部上进行匹配，在http_raw_header的同一个缓冲区上进行匹配， D 可以和/R一起使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-raw-header内。
 
-* ``M``: Makes pcre match on the request-method. So, it matches on the
-  same buffer as http_method.  M can be combined with /R. Note that R
-  is relative to the previous match so both matches have to be in the
-  HTTP-method buffer.
+* ``M``: 在request-method上进行匹配，在http_method的同一个缓冲区上进行匹配， M 可以和/R一起使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-method内。
 
-* ``C``: Makes pcre match on the HTTP-cookie. So, it matches on the
-  same buffer as http_cookie.  C can be combined with /R. Note that R
-  is relative to the previous match so both matches have to be in the
-  HTTP-cookie buffer.
+* ``C``: 在HTTP-cookie上进行匹配，在http_cookie的同一个缓冲区上进行匹配， C 可以和/R一起使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-cookie内。
 
-* ``S``: Makes pcre match on the HTTP-stat-code. So, it matches on the
-  same buffer as http_stat_code.  S can be combined with /R. Note that
-  R is relative to the previous match so both matches have to be in
-  the HTTP-stat-code buffer.
+* ``S``: 在HTTP-stat-code上进行匹配，在http_stat_code的同一个缓冲区上进行匹配， S 可以和/R一起使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-stat-code内。
 
-* ``Y``: Makes pcre match on the HTTP-stat-msg. So, it matches on the
-  same buffer as http_stat_msg.  Y can be combined with /R. Note that
-  R is relative to the previous match so both matches have to be in
-  the HTTP-stat-msg buffer.
+* ``Y``: 在HTTP-stat-msg上进行匹配，在http_stat_msg的同一个缓冲区上进行匹配， Y 可以和/R一起使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-stat-msg内。
 
 * ``B``: You can encounter B in signatures but this is just for
   compatibility. So, Suricata does not use B but supports it so it
-  does not cause errors.
+  does not cause errors.您可能在规则中遇到B，但这只是为了兼容性。 因此，Suricata不使用B但支持它，这样不会导致错误。
 
-* ``O``: Overrides the configures pcre match limit.
+* ``O``: 覆盖pcre匹配限制的配置。
 
-* ``V``: Makes pcre match on the HTTP-User-Agent. So, it matches on
-  the same buffer as http_user_agent.  V can be combined with /R. Note
-  that R is relative to the previous match so both matches have to be
-  in the HTTP-User-Agent buffer.
+* ``V``: 在HTTP-User-Agent上进行匹配，在http_user_agent的同一个缓冲区上进行匹配， V 可以和/R一起使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-User-Agent内。
 
-* ``W``: Makes pcre match on the HTTP-Host. So, it matches on the same
-  buffer as http_host.  W can be combined with /R. Note that R is
-  relative to the previous match so both matches have to be in the
-  HTTP-Host buffer.
+* ``W``: 在HTTP-Host上进行匹配，在http_host的同一个缓冲区上进行匹配， W 可以和/R一起使用。注意 R 是相对于上一个匹配而言的，所以两个匹配都必须在HTTP-Host内。
