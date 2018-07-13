@@ -1,19 +1,13 @@
-Suricata Fast Pattern Determination Explained
+Suricata快速匹配模式选择详解
 =============================================
 
-If the 'fast_pattern' keyword is explicitly set in a rule, Suricata
-will use that as the fast pattern match. The 'fast_pattern' keyword
-can only be set once per rule. If 'fast_pattern' is not set, Suricata
-automatically determines the content to use as the fast pattern match.
+如果在规则中明确设置了'fast_pattern'关键字，Suricata将采用快速模式匹配。'fast_pattern'关键字在一条规则中只能设置一次。如果规则中没有设置'fast_pattern'，Suricata将自动选择一个content来使用快速模式匹配。
 
-The following explains the logic Suricata uses to automatically
-determine the fast pattern match to use.
+以下说明Suricata快速模式匹配自动选择的逻辑。
 
-Be aware that if there are positive (i.e. non-negated) content
-matches, then negated content matches are ignored for fast pattern
-determination. Otherwise, negated content matches are considered.
+请注意，如果存在正（即非否定）content匹配，则忽略否定content匹配以进行快速模式选择。 如果不存在，才考虑否定的content匹配。
 
-The fast_pattern selection criteria are as follows:
+fast_pattern选择标准如下:
 
 #. Suricata first identifies all content matches that have the highest
    "priority" that are used in the signature.  The priority is based
