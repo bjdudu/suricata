@@ -1,5 +1,5 @@
 =====================
-Prefiltering Keywords
+预过滤关键字
 =====================
 
 .. _rules-keyword-fast_pattern:
@@ -10,15 +10,10 @@ fast_pattern
 
    fast-pattern-explained
 
-Only one content of a signature will be used in the Multi Pattern
-Matcher (MPM). If there are multiple contents, then Suricata uses the
-'strongest' content. This means a combination of length, how varied a
-content is, and what buffer it is looking in. Generally, the longer
-and more varied the better. For full details on how Suricata
-determines the fast pattern match, see :doc:`fast-pattern-explained`.
+在多模式匹配器（MPM）中仅使用规则中的一个content，如果有多个content，那么Suricata会使用'strongest' content，strong意味着长度的组合、content的变化程度以及正在检查什么样的缓冲区。通常情况下，长度越长和变化程度越高越好。有关Suricata如何确定快速模式匹配的完整详细信息参见 :doc:`fast-pattern-explained`.
 
 Sometimes a signature writer concludes he wants Suricata to use
-another content than it does by default.
+another content than it does by default.有时规则的作者会得出这样的结论：
 
 For instance::
 
