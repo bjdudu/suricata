@@ -9,50 +9,27 @@ Suricata快速匹配模式选择详解
 
 fast_pattern选择标准如下:
 
-#. Suricata first identifies all content matches that have the highest
-   "priority" that are used in the signature.  The priority is based
-   off of the buffer being matched on and generally 'http_*' buffers
-   have a higher priority (lower number is higher priority).  See
-   :ref:`Appendix B <fast-pattern-explained-appendix-b>` for details
-   on which buffers have what priority.
-#. Within the content matches identified in step 1 (the highest
-   priority content matches), the longest (in terms of character/byte
-   length) content match is used as the fast pattern match.
-#. If multiple content matches have the same highest priority and
-   qualify for the longest length, the one with the highest
-   character/byte diversity score ("Pattern Strength") is used as the
-   fast pattern match.  See :ref:`Appendix C
-   <fast-pattern-explained-appendix-c>` for details on the algorithm
-   used to determine Pattern Strength.
-#. If multiple content matches have the same highest priority, qualify
-   for the longest length, and the same highest Pattern Strength, the
-   buffer ("list_id") that was *registered last* is used as the fast
-   pattern match.  See :ref:`Appendix B
-   <fast-pattern-explained-appendix-b>` for the registration order of
-   the different buffers/lists.
-#. If multiple content matches have the same highest priority, qualify
-   for the longest length, the same highest Pattern Strength, and have
-   the same list_id (i.e. are looking in the same buffer), then the
-   one that comes first (from left-to-right) in the rule is used as
-   the fast pattern match.
+#. Suricata首先匹配规则中具有最高“优先级”的所有content，优先级基于匹配的缓冲区，通常'http_*' 缓冲区具有更高的优先级 (更小的数字代表更高的优先级)。关于什么样的缓冲区拥有什么样的优先级请参阅   :ref:`Appendix B <fast-pattern-explained-appendix-b>` .
+#. 在步骤1中进行的content匹配（最高优先级content匹配）中，最长（就字符/字节长度而言）content匹配使用快速模式匹配。
+#. 如果多个content匹配具有相同的最高优先级并且都是最长长度，则具有最高字符/字节多样性评分（“模式强度”）的那个匹配用作快速模式匹配。关于确定模式强度的算法详情请参见  :ref:`Appendix C <fast-pattern-explained-appendix-c>` .
+#. 如果多个content匹配具有相同的最高优先级，都是最长长度，且具有相同的最高模式强度，则*最后注册*的缓冲区("list_id") 使用快速模式匹配。 不同的缓冲区/列表注册顺序详情请参阅 :ref:`Appendix B
+   <fast-pattern-explained-appendix-b>` .
+#. 如果多个content匹配具有相同的最高优先级，都是最长长度，具有相同的最高模式强度，并且具有相同的list_id(即在同一个缓冲区内匹配)，那么content按照在规则中从左到右的顺序，第一个content使用快速匹配。
 
-It is worth noting that for content matches that have the same
-priority, length, and Pattern Strength, 'http_stat_msg',
-'http_stat_code', and 'http_method' take precedence over regular
-'content' matches.
+值得注意的是，对于具有相同优先级，长度和模式强度的content匹配，'http_stat_msg'，'http_stat_code'和'http_method'优先于常规'content'匹配。
 
-Appendices
+附录
 ----------
 
 .. _fast-pattern-explained-appendix-a:
 
-Appendix A - Buffers, list_id values, and Registration Order for Suricata 1.3.4
+附录 A - 缓冲区, list_id值, Suricata 1.3.4中它们的注册顺序
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This should be pretty much the same for Suricata 1.1.x - 1.4.x.
+在Suricata 1.1.x - 1.4.x中，这些应该都是一样的.
 
 ======= ============================== ======================== ==================
-list_id Content Modifier Keyword       Buffer Name              Registration Order
+list_id 内容修饰符关键字                 缓冲区名                  注册顺序
 ======= ============================== ======================== ==================
 1       <none> (regular content match) DETECT_SM_LIST_PMATCH    1 (first)
 2       http_uri                       DETECT_SM_LIST_UMATCH    2
@@ -68,17 +45,17 @@ list_id Content Modifier Keyword       Buffer Name              Registration Ord
 15      http_user_agent                DETECT_SM_LIST_HUADMATCH 12 (last)
 ======= ============================== ======================== ==================
 
-Note: registration order doesn't matter when it comes to determining the fast pattern match for Suricata 1.3.4 but list_id value does.
+注意: 在决定Suricata 1.3.4的快速模式匹配时，注册顺序无关紧要，但list_id值起作用。
 
 .. _fast-pattern-explained-appendix-b:
 
-Appendix B - Buffers, list_id values, Priorities, and Registration Order for Suricata 2.0.7
+附录 B - 缓冲区, list_id值, 优先级，Suricata 2.0.7中它们的注册顺序
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This should be pretty much the same for Suricata 2.0.x.
+在Suricata 2.0.x 中，这些应该都是一样的.
 
 ========================================== ================== ============================== ============================= =======
-Priority (lower number is higher priority) Registration Order Content Modifier Keyword       Buffer Name                   list_id
+优先级 (数字小代表高优先级)                   注册顺序           内容修饰符关键字                缓冲区名字                     list_id
 ========================================== ================== ============================== ============================= =======
 3                                          11                 <none> (regular content match) DETECT_SM_LIST_PMATCH         1
 3                                          12                 http_method                    DETECT_SM_LIST_HMDMATCH       12
@@ -97,22 +74,14 @@ Priority (lower number is higher priority) Registration Order Content Modifier K
 2                                          15 (last)          dns_query                      DETECT_SM_LIST_DNSQUERY_MATCH 20
 ========================================== ================== ============================== ============================= =======
 
-Note: list_id value doesn't matter when it comes to determining the
-fast pattern match for Suricata 2.0.7 but registration order does.
+注意: 在决定Suricata 2.0.7的快速模式匹配时，list_id无关紧要，但注册顺序值起作用.
 
 .. _fast-pattern-explained-appendix-c:
 
-Appendix C - Pattern Strength Algorithm
+附录 C - 模式强度算法
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-From detect-engine-mpm.c. Basically the Pattern Strength "score"
-starts at zero and looks at each character/byte in the passed in byte
-array from left to right. If the character/byte has not been seen
-before in the array, it adds 3 to the score if it is an alpha
-character; else it adds 4 to the score if it is a printable character,
-0x00, 0x01, or 0xFF; else it adds 6 to the score. If the
-character/byte has been seen before it adds 1 to the score. The final
-score is returned.
+来自detect-engine-mpm.c. 基本上，模式强度“评分”从零开始，从左到右检查传入的字节数组中的每个字符/字节。如果当前字符/字节是第一次出现，接下来根据当前字符/字节类型来加分，如果当前字符是字母，则分数加3，如果不是字母字符，但是可打印字符或者是0x00, 0x01, 0xFF，则分数加4，如果不是这些字符，那么分数加6。如果不是第一次出现的话，分数加1。最终得到模式强度评分。
 
 .. code-block:: c
 
