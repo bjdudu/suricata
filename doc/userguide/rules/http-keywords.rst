@@ -210,73 +210,51 @@ http_request_line
 http_header 和 http_raw_header
 -------------------------------
 
-With the ``http_header`` content modifier, it is possible to match
-specifically and only on the HTTP header buffer. This contains all of
-the extracted headers in a single buffer, except for those indicated
-in the documentation that are not able to match by this buffer and
-have their own content modifier (e.g. ``http_cookie``). The modifier
-can be used in combination with all previously mentioned content
-modifiers, like ``depth``, ``distance``, ``offset``, ``nocase`` and
-``within``.
+通过 ``http_header`` content修饰符, 可以仅在HTTP头部缓冲区匹配，这包含提取到单个缓冲区中的所有头部，除开文档中指示的那些无法通过此缓冲区匹配并具有自己的content修饰符的头部(如 ``http_cookie``). 这个关键字可以和所有之前提到过的content修饰符组合使用，如: ``depth``, ``distance``, ``offset``, ``nocase`` and ``within``.
 
-    **Note**: the header buffer is *normalized*. Any trailing
-    whitespace and tab characters are removed. See:
+    **Note**: 头部缓冲区是 *规范化的*. 末尾的所有空格和制表符都已经删除。 详见:
     https://lists.openinfosecfoundation.org/pipermail/oisf-users/2011-October/000935.html.
-    To avoid that, use the ``http_raw_header`` keyword.
+    要避免这一点，请使用 ``http_raw_header`` 关键字.
 
-Example of a header in a HTTP request:
+HTTP请求中头部的例子:
 
 .. image:: http-keywords/header.png
 
-Example of the purpose of ``http_header``:
+ ``http_header``示例:
 
 .. image:: http-keywords/header1.png
 
 http_cookie
 -----------
 
-With the ``http_cookie`` content modifier, it is possible to match
-specifically and only on the cookie buffer. The keyword can be used in
-combination with all previously mentioned content modifiers like
-``depth``, ``distance``, ``offset``, ``nocase`` and ``within``.
+通过 ``http_cookie`` content修饰符, 可以仅在cookie缓冲区上匹配，这个关键字可以和所有之前提到过的content修饰符组合使用，如: ``depth``, ``distance``, ``offset``, ``nocase`` and ``within``.
 
-Note that cookies are passed in HTTP headers, but are extracted to a
-dedicated buffer and matched using their own specific content
-modifier.
+注意cookie在HTTP头部里传输，但是会提取到一个单独的缓冲区，通过他自己特有的content修饰符来匹配。
 
-Example of a cookie in a HTTP request:
+HTTP请求中cookie的例子:
 
 .. image:: http-keywords/cookie.png
 
-Example of the purpose of ``http_cookie``:
+ ``http_cookie`` 示例:
 
 .. image:: http-keywords/cookie1.png
 
 http_user_agent
 ---------------
 
-The ``http_user_agent`` content modifier is part of the HTTP request
-header. It makes it possible to match specifically on the value of the
-User-Agent header. It is normalized in the sense that it does not
-include the _"User-Agent: "_ header name and separator, nor does it
-contain the trailing carriage return and line feed (CRLF). The keyword
-can be used in combination with all previously mentioned content
-modifiers like ``depth``, ``distance``, ``offset``, ``nocase`` and
-``within``. Note that the ``pcre`` keyword can also inspect this
-buffer when using the ``/V`` modifier.
+ ``http_user_agent`` content修饰符是HTTP请求头部的一部分，可以仅在User-Agent请求头上匹配。它是规范化的，这意味着它不包括 _"User-Agent: "_ 头部名称和分隔符，也不包括末尾的回车换行符(CRLF)。 T这个关键字可以和所有之前提到过的content修饰符组合使用，如: ``depth``, ``distance``, ``offset``, ``nocase`` and ``within``. 注意 ``pcre`` 关键字在使用 ``/V`` 修饰符时，也可以检查这个缓冲区。 
 
-Normalization: leading spaces **are not** part of this buffer. So
-"User-Agent: \r\n" will result in an empty ``http_user_agent`` buffer.
+规范化: 开头的空白字符 **不是** 这个缓冲区的一部分，因此. "User-Agent: \r\n" 会导致一个空的 ``http_user_agent`` 缓冲区。
 
-Example of the User-Agent header in a HTTP request:
+HTTP请求中User-Agent的例子:
 
 .. image:: http-keywords/user_agent.png
 
-Example of the purpose of ``http_user_agent``:
+``http_user_agent`` 示例:
 
 .. image:: http-keywords/user_agent_match.png
 
-Notes
+注意
 ~~~~~
 
 -  The ``http_user_agent`` buffer will NOT include the header name,
