@@ -1,29 +1,23 @@
-HTTP Keywords
+HTTP关键字
 =============
 .. role:: example-rule-emphasis
 
-There are additional content modifiers that can provide protocol-specific
-capabilities at the application layer. More information can be found at
-:doc:`payload-keywords` These keywords make sure the signature checks only
-specific parts of the network traffic. For instance, to check specifically on
-the request URI, cookies, or the HTTP request or response body, etc.
+还有其他内容修饰符可以在应用程序层提供特定于协议的功能。可以在以下位置找到更多信息 :doc:`payload-keywords` .这些关键字确保规则仅检查网络流量的特定部分。例如，特别检查请求URI，cookie或HTTP请求或响应正文等。
 
-All HTTP keywords are modifiers. Note the difference between content modifiers
-and sticky buffers. See :ref:`rules-modifiers` for more information. As a
-refresher:
+所有HTTP关键字都是修饰符,注意内容修饰符和粘滞缓冲区（sticky buffer）之间的区别。 有关更多信息，请参阅 :ref:`rules-modifiers` . 对于新手:
 
-* **'content modifiers'** look back in the rule, e.g.::
+* **'content modifiers'** 回顾规则，例如::
 
       alert http any any -> any any (content:"index.php"; http_uri; sid:1;)
 
-* **'sticky buffers'** are placed first and all keywords following it apply to that buffer, for instance::
+* **'sticky buffers'** 前置并且它后面所有的关键字都作用在该缓冲区, 例如::
 
       alert http any any -> any any (http_response_line; content:"403 Forbidden"; sid:1;)
 
-The following **request** keywords are available:
+ **request** 关键字如下:
 
 ============================== ======================== ==================
-Keyword                        Sticky or Modifier       Direction
+关键字                          Sticky或修饰符            方向
 ============================== ======================== ==================
 http_uri                       Modifier                 Request
 http_raw_uri                   Modifier                 Request
@@ -48,10 +42,10 @@ http_protocol                  Sticky Buffer            Both
 http_header_names              Sticky Buffer            Both
 ============================== ======================== ==================
 
-The following **response** keywords are available:
+**response** 关键字如下:
 
 ============================== ======================== ==================
-Keyword                        Sticky or Modifier       Direction
+关键字                          Sticky或修饰符            方向
 ============================== ======================== ==================
 http_stat_msg                  Modifier                 Response
 http_stat_code                 Modifier                 Response
@@ -68,10 +62,9 @@ http_protocol                  Sticky Buffer            Both
 http_header_names              Sticky Buffer            Both
 ============================== ======================== ==================
 
-HTTP Primer
+HTTP 入门
 -----------
-It is important to understand the structure of HTTP requests and
-responses. A simple example of a HTTP request and response follows:
+了解HTTP请求和响应的结构非常重要。.一个简单的HTTP请求和响应的例子如下:
 
 **HTTP request**
 
@@ -79,11 +72,7 @@ responses. A simple example of a HTTP request and response follows:
 
    GET /index.html HTTP/1.0\r\n
 
-GET is a request **method**.  Examples of methods are: GET, POST, PUT,
-HEAD, etc. The URI path is ``/index.html`` and the HTTP version is
-``HTTP/1.0``. Several HTTP versions have been used over the years; of
-the versions 0.9, 1.0 and 1.1, 1.0 and 1.1 are the most commonly used
-today.
+GET 是请求 **method**.  请求的例子有: GET, POST, PUT, HEAD等等. URI路径为 ``/index.html``， HTTP版本是 ``HTTP/1.0``. 过去的这些前，使用过多个HTTP版本; 包括0.9, 1.0 和 1.1, 现在用得最广泛的是1.0 和 1.1.
 
 **HTTP response**
 
@@ -94,37 +83,27 @@ today.
    <title> some page </title>
    </HTML>
 
-In this example, HTTP/1.0 is the HTTP version, 200 the response status
-code and OK the response status message.
+在这个例子里, HTTP/1.0 是HTTP版本, 200 是响应状态码， OK是响应状态信息.
 
-Another more detailed example:
+另一个更加详细的例子:
 
-Request:
+请求:
 
 .. image:: http-keywords/request.png
 
-Response:
+响应:
 
 .. image:: http-keywords/response1.png
 
-Request:
+请求:
 
 .. image:: http-keywords/request2.png
 
-Although cookies are sent in an HTTP header, you can not match on them
-with the ``http_header`` keyword. Cookies are matched with their own
-keyword, namely ``http_cookie``.
+尽管cookie在HTTP头部里发送，但是你不能使用 ``http_header`` 关键字来匹配它，cookie使用它自己的关键字来进行匹配，叫 ``http_cookie``.
 
-Each part of the table belongs to a so-called *buffer*. The HTTP
-method belongs to the method buffer, HTTP headers to the header buffer
-etc. A buffer is a specific portion of the request or response that
-Suricata extracts in memory for inspection.
+表的每个部分属于一个所谓的 *buffer*.  HTTP方法属于方法缓冲区，HTTP头部属于头部缓冲区等。缓冲区是Suricata在内存中提取以进行检查的请求或响应的特定部分。
 
-All previous described keywords can be used in combination with a
-buffer in a signature. The keywords ``distance`` and ``within`` are
-relative modifiers, so they may only be used within the same
-buffer. You can not relate content matches against different buffers
-with relative modifiers.
+所有先前描述的关键字可以规则中的缓冲区组合使用。关键字 ``distance`` 和 ``within`` 是相对修饰符，因此它们只能在同一个缓冲区中使用。您不能使用相对修饰符将content匹配与不同缓冲区相关联。
 
 http_method
 -----------
