@@ -9,10 +9,10 @@ Suricata快速匹配模式选择详解
 
 fast_pattern选择标准如下:
 
-#. Suricata首先匹配规则中具有最高“优先级”的所有content，优先级基于匹配的缓冲区，通常'http_*' 缓冲区具有更高的优先级 (更小的数字代表更高的优先级)。关于什么样的缓冲区拥有什么样的优先级请参阅   :ref:`Appendix B <fast-pattern-explained-appendix-b>` .
+#. Suricata首先匹配规则中具有最高“优先级”的所有content，优先级基于匹配的缓冲区，通常'http_*' 缓冲区具有更高的优先级 (更小的数字代表更高的优先级)。关于什么样的缓冲区拥有什么样的优先级请参阅   :ref:`附录 B <fast-pattern-explained-appendix-b>` .
 #. 在步骤1中进行的content匹配（最高优先级content匹配）中，最长（就字符/字节长度而言）content匹配使用快速模式匹配。
-#. 如果多个content匹配具有相同的最高优先级并且都是最长长度，则具有最高字符/字节多样性评分（“模式强度”）的那个匹配用作快速模式匹配。关于确定模式强度的算法详情请参见  :ref:`Appendix C <fast-pattern-explained-appendix-c>` .
-#. 如果多个content匹配具有相同的最高优先级，都是最长长度，且具有相同的最高模式强度，则*最后注册*的缓冲区("list_id") 使用快速模式匹配。 不同的缓冲区/列表注册顺序详情请参阅 :ref:`Appendix B
+#. 如果多个content匹配具有相同的最高优先级并且都是最长长度，则具有最高字符/字节多样性评分（“模式强度”）的那个匹配用作快速模式匹配。关于确定模式强度的算法详情请参见  :ref:`附录 C <fast-pattern-explained-appendix-c>` .
+#. 如果多个content匹配具有相同的最高优先级，都是最长长度，且具有相同的最高模式强度，则*最后注册*的缓冲区("list_id") 使用快速模式匹配。 不同的缓冲区/列表注册顺序详情请参阅 :ref:`附录 B
    <fast-pattern-explained-appendix-b>` .
 #. 如果多个content匹配具有相同的最高优先级，都是最长长度，具有相同的最高模式强度，并且具有相同的list_id(即在同一个缓冲区内匹配)，那么content按照在规则中从左到右的顺序，第一个content使用快速匹配。
 
