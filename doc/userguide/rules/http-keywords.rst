@@ -108,19 +108,16 @@ GET 是请求 **method**.  请求的例子有: GET, POST, PUT, HEAD等等. URI�
 http_method
 -----------
 
-With the ``http_method`` content modifier, it is possible to match
-specifically and only on the HTTP method buffer. The keyword can be
-used in combination with all previously mentioned content modifiers
-such as: ``depth``, ``distance``, ``offset``, ``nocase`` and ``within``.
+通过 ``http_method`` 修饰符, 可以仅在HTTP方法缓冲区上进行匹配，这个关键字可以和所有之前提到过的content修饰符组合使用，如: ``depth``, ``distance``, ``offset``, ``nocase`` and ``within``.
 
-Examples of methods are: **GET**, **POST**, **PUT**, **HEAD**,
+HTTP方法的例子有: **GET**, **POST**, **PUT**, **HEAD**,
 **DELETE**, **TRACE**, **OPTIONS**, **CONNECT** and **PATCH**.
 
-Example of a method in a HTTP request:
+HTTP请求中的方法:
 
 .. image:: http-keywords/method2.png
 
-Example of the purpose of method:
+方法的目的:
 
 .. image:: http-keywords/method.png
 
@@ -133,104 +130,84 @@ Example of the purpose of method:
 http_uri and http_raw_uri
 -------------------------
 
-With the ``http_uri`` and the ``http_raw_uri`` content modifiers, it
-is possible to match specifically and only on the request URI
-buffer. The keyword can be used in combination with all previously
-mentioned content modifiers like ``depth``, ``distance``, ``offset``,
-``nocase`` and ``within``.
+通过 ``http_uri`` 和 ``http_raw_uri`` content修饰符, 可以仅在请求URI缓冲区上匹配。这个关键字可以和所有之前提到过的content修饰符组合使用，如: ``depth``, ``distance``, ``offset``, ``nocase`` and ``within``.
 
-The uri has two appearances in Suricata: the raw_uri and the
-normalized uri. The space for example can be indicated with the
-heximal notation %20. To convert this notation in a space, means
-normalizing it. It is possible though to match specific on the
-characters %20 in a uri. This means matching on the raw_uri.  The
-raw_uri and the normalized uri are separate buffers. So, the raw_uri
-inspects the raw_uri buffer and can not inspect the normalized buffer.
+uri在Suricata中有两种形式：raw_uri和规范化的uri。例如，空格可以用十六进制符号％20表示，将这个十六进制转换成空格，就表示将其规范化。虽然可以匹配uri中字符％20的特定内容，但这意味着匹配raw_uri。raw_uri和规范化的uri是不同的缓冲区。因此，raw_uri检查raw_uri缓冲区并且无法检查规范化缓冲区。
 
-Example of the URI in a HTTP request:
+HTTP请求中URI的例子:
 
 .. image:: http-keywords/uri1.png
 
-Example of the purpose of ``http_uri``:
+ ``http_uri`` 示例:
 
 .. image:: http-keywords/uri.png
 
 uricontent
 ----------
 
-The ``uricontent`` keyword has the exact same effect as the
-``http_uri`` content modifier. ``uricontent`` is a deprecated
-(although still supported) way to match specifically and only on the
-request URI buffer.
+ ``uricontent`` 关键字和 ``http_uri`` content关键字具有完全一样的作用. ``uricontent`` 是一个过时的(但是仍然支持的) 方法，表示仅在请求URI缓冲区上匹配.
 
-Example of ``uricontent``:
+ ``uricontent`` 示例:
 
 .. container:: example-rule
 
     alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"ET TROJAN Possible Vundo Trojan Variant reporting to Controller"; flow:established,to_server; content:"POST "; depth:5; :example-rule-emphasis:`uricontent:"/frame.html?";` urilen: > 80; classtype:trojan-activity; reference:url,doc.emergingthreats.net/2009173; reference:url,www.emergingthreats.net/cgi-bin/cvsweb.cgi/sigs/VIRUS/TROJAN_Vundo; sid:2009173; rev:2;)
 
-The difference between ``http_uri`` and ``uricontent`` is the syntax:
+ ``http_uri`` and ``uricontent`` 的区别在于语法:
 
 .. image:: http-keywords/uricontent1.png
 
 .. image:: http-keywords/http_uri.png
 
-When authoring new rules, it is recommended that the ``http_uri``
-content modifier be used rather than the deprecated ``uricontent``
-keyword.
+在编写新规则时, 建议使用 ``http_uri`` content修饰符，而不是已经过时的 ``uricontent`` 关键字.
 
 urilen
 ------
 
-The ``urilen`` keyword is used to match on the length of the request
-URI. It is possible to use the ``<`` and ``>`` operators, which
-indicate respectively *smaller than* and *larger than*.
+ ``urilen`` 关键字用来匹配请求URI的长度，可以使用 ``<`` 和 ``>`` 操作符, 分别表示 *小于* 和 *大于*.
 
-The format of ``urilen`` is::
+ ``urilen`` 格式是::
 
   urilen:3;
 
-Other possibilities are::
+其它可能的格式::
 
   urilen:1;
   urilen:>1;
   urilen:<10;
-  urilen:10<>20;	(bigger than 10, smaller than 20)
+  urilen:10<>20;	(大于 10, 小于 20)
 
-Example:
+如:
 
 .. image:: http-keywords/urilen.png
 
-Example of ``urilen`` in a signature:
+规则中使用 ``urilen`` 的例子:
 
 .. container:: example-rule
 
     alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"ET TROJAN Possible Vundo Trojan Variant reporting to Controller"; flow:established,to_server; content:"POST "; depth:5; uricontent:"/frame.html?"; :example-rule-emphasis:`urilen: > 80;` classtype:trojan-activity; reference:url,doc.emergingthreats.net/2009173; reference:url,www.emergingthreats.net/cgi-bin/cvsweb.cgi/sigs/VIRUS/TROJAN_Vundo; sid:2009173; rev:2;)
 
-You can also append ``norm`` or ``raw`` to define what sort of buffer you want
-to use (normalized or raw buffer).
+你可以添加 ``norm`` 或 ``raw`` 来定义你想使用什么类型的缓冲区(规范化的或者raw缓冲区).
 
 http_protocol
 -------------
 
-The ``http_protocol`` inspects the protocol field from the HTTP request or
-response line. If the request line is 'GET / HTTP/1.0\r\n', then this buffer
-will contain 'HTTP/1.0'.
+ ``http_protocol`` 检查HTTP请求或者响应中的协议字段。 如果请求行是 'GET / HTTP/1.0\r\n', 那么这个缓冲区就是 'HTTP/1.0'.
 
-Example::
+如::
 
     alert http any any -> any any (flow:to_server; http_protocol; content:"HTTP/1.0"; sid:1;)
 
 http_request_line
 -----------------
 
-The ``http_request_line`` forces the whole HTTP request line to be inspected.
+ ``http_request_line`` 强制检查整个HTTP请求行.
 
-Example::
+如::
 
     alert http any any -> any any (http_request_line; content:"GET / HTTP/1.0"; sid:1;)
 
-http_header and http_raw_header
+http_header 和 http_raw_header
 -------------------------------
 
 With the ``http_header`` content modifier, it is possible to match
