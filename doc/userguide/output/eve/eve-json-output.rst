@@ -1,24 +1,23 @@
 .. _eve-json-output:
 
-Eve JSON Output
+Eve JSON输出
 ===============
 
-Suricata can output alerts, http events, dns events, tls events and file info through json.
+Suricata能够使用JSON输出告警，HTTP事件，DNS事件,TLS事件和文件信息。
 
 The most common way to use this is through 'EVE', which is a firehose approach where all these logs go into a single file.
+最常用的方法是通过'EVE'把所有这些日志都放在一个文件中。
 
 .. literalinclude:: ../../partials/eve-log.yaml
 
-Each alert, http log, etc will go into this one file: 'eve.json'. This file
-can then be processed by 3rd party tools like Logstash or jq.
+任意一条告警，HTTP日志等将会输出到 'eve.json' 这一个文件中，这个文件能够被第三方工具进行处理，如Logstash或者jq. 
 
-Output types
+输出类型
 ~~~~~~~~~~~~
 
-EVE can output to multiple methods. ``regular`` is a normal file. Other
-options are ``syslog``, ``unix_dgram``, ``unix_stream`` and ``redis``.
+EVE可以通过多种方式输出. ``regular`` 表示输出到文件. 其它选项有 ``syslog``, ``unix_dgram``, ``unix_stream`` 和 ``redis``.
 
-Output types::
+输出类型 ::
 
       filetype: regular #regular|syslog|unix_dgram|unix_stream|redis
       filename: eve.json
@@ -44,19 +43,17 @@ Output types::
       #    enabled: yes ## set enable to yes to enable query pipelining
       #    batch-size: 10 ## number of entry to keep in buffer
 
-Alerts
+告警
 ~~~~~~
 
-Alerts are event records for rule matches. They can be amended with
-metadata, such as the application layer record (HTTP, DNS, etc) an
-alert was generated for, and elements of the rule.
+告警是记录规则匹配的事件，它可以被元数据修改，例如应用层（HTTP，DNS等）根据规则及其元素生成一条告警。
 
 Metadata::
 
         - alert:
-            #payload: yes             # enable dumping payload in Base64
-            #payload-buffer-size: 4kb # max size of payload buffer to output in eve-log
-            #payload-printable: yes   # enable dumping payload in printable (lossy) format
+            #payload: yes             # 使payload以base64编码输出
+            #payload-buffer-size: 4kb # 向eve-log输出payload缓冲区的最大size
+            #payload-printable: yes   # 使payload以可打印(lossy)格式输出
             #packet: yes              # enable dumping of packet (without stream segments)
             #http-body: yes           # enable dumping of http body in Base64
             #http-body-printable: yes # enable dumping of http body in printable format
